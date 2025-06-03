@@ -50,4 +50,33 @@ typedef struct s_game
     t_player    player;
 }   t_game;
 
+// Function prototypes
+
+// player.c
+void key_press(int keycode, t_player *player);
+void key_release(int keycode, t_player *player);
+void move_player(t_player *player);
+
+// image.c
+void put_pixel(t_game *game, int x, int y, int color);
+void draw_square(t_game *game, int x, int y, int size, int color);
+void clear_image(t_game *game);
+
+// map.c
+char **get_map(void);
+void draw_map(t_game *game);
+
+// raycast.c
+void draw_line(t_game *game, t_player *player, float start_x, int i);
+int draw_loop(t_game *game);
+
+// utils.c
+bool touch_wall(t_game *game, float px, float py);
+float distance(float dx, float dy);
+float fix_fish(t_game *game, float x1, float y1, float x2, float y2);
+
+// init.c
+void init_game(t_game *game);
+void init_player(t_player *player);
+
 #endif

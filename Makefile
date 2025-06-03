@@ -7,6 +7,12 @@ LIBFT_DIR = libft
 MLX_DIR   = mlx
 
 SRC       = main.c \
+			init.c \
+			image.c \
+			map.c \
+			player.c \
+			raycast.c \
+			utils.c
 
 OBJ       = $(SRC:%.c=$(OBJ_DIR)/%.o)
 LIBFT     = $(LIBFT_DIR)/libft.a
@@ -42,7 +48,7 @@ $(NAME): $(LIBFT) $(CMLX) $(OBJ)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	@echo "compiling$<"
+	@echo "compiling $<"
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(LIBFT):
