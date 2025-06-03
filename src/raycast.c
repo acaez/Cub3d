@@ -1,15 +1,15 @@
 #include "../inc/cub3D.h"
 
-void draw_line(t_game *game, t_player *player, float start_x, int i)
+void	draw_line(t_game *game, t_player *player, float start_x, int i)
 {
-	float ray_x;
-	float ray_y;
-	float cos_angle;
-	float sin_angle;
-	float dist;
-	float height;
-	int   start_y;
-	int   end;
+	float	ray_x;
+	float	ray_y;
+	float	cos_angle;
+	float	sin_angle;
+	float	dist;
+	float	height;
+	int		start_y;
+	int		end;
 
 	ray_x = player->x;
 	ray_y = player->y;
@@ -36,20 +36,20 @@ void draw_line(t_game *game, t_player *player, float start_x, int i)
 	}
 }
 
-int draw_loop(t_game *game)
+int	draw_loop(t_game *game)
 {
-	t_player *player;
-	float  ray_x;
-	float  ray_y;
-	float  cos_angle;
-	float  sin_angle;
-	float   fraction;
-	float   start_x;
-	int    i;
+	t_player	*player;
+	float		ray_x;
+	float		ray_y;
+	float		cos_angle;
+	float		sin_angle;
+	float		fraction;
+	float		start_x;
+	int			i;
 
 	player = &game->player;
-    move_player(&game->player);
-    clear_image(game);
+	move_player(&game->player);
+	clear_image(game);
 	if (DEBGUG)
 	{
 		draw_square(game, game->player.x, game->player.y, 10, 0xFF0000);
@@ -74,6 +74,6 @@ int draw_loop(t_game *game)
 		start_x += fraction;
 		i++;
 	}
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return (0);
-} 
+}

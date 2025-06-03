@@ -34,12 +34,12 @@ void	key_release(int keycode, t_player *player)
 		player->rot_right = false;
 }
 
-void move_player(t_player *player)
+void	move_player(t_player *player)
 {
-	int speed;
-	float angle;
-	float cos_angle;
-	float sin_angle;
+	int		speed;
+	float	angle;
+	float	cos_angle;
+	float	sin_angle;
 
 	speed = 3;
 	angle = 0.03;
@@ -73,4 +73,4 @@ void move_player(t_player *player)
 		player->x -= cos_angle * speed;
 		player->y += sin_angle * speed;
 	}
-} 
+}

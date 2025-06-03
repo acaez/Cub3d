@@ -21,4 +21,4 @@ void	init_player(t_player *player)
 	player->key_right = false;
 	player->rot_left = false;
 	player->rot_right = false;
-} 
+}

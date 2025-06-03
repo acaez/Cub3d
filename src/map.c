@@ -1,8 +1,8 @@
 #include "../inc/cub3D.h"
 
-char **get_map(void)
+char	**get_map(void)
 {
-	char **map;
+	char	**map;
 
 	map = (char **)malloc(sizeof(char *) * 11);
 	if (!map)
@@ -22,19 +22,19 @@ char **get_map(void)
 	return (map);
 }
 
-void draw_map(t_game *game)
+void	draw_map(t_game *game)
 {
-	char **map;
-	int  color;
-	int x;
-	int y;
+	char	**map;
+	int		color;
+	int		x;
+	int		y;
 
 	map = game->map;
 	if (!map)
 		return ;
 	color = 0xFFFFFF;
 	y = 0;
-	while(map[y])
+	while (map[y])
 	{
 		x = 0;
 		while (map[y][x])
@@ -45,4 +45,4 @@ void draw_map(t_game *game)
 		}
 		y++;
 	}
-} 
+}

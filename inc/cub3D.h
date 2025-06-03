@@ -8,75 +8,73 @@
 # include <stdbool.h>
 # include <math.h>
 
-# define WIDTH 1280
+# define WIDTH  1280
 # define HEIGHT 720
-# define BLOCK 64
+# define BLOCK  64
 # define DEBGUG 1
 
-# define ESC 53
-# define W 13
-# define A 0
-# define S 1
-# define D 2
-# define LEFT 123
-# define RIGHT 124
+# define W      13
+# define A      0
+# define S      1
+# define D      2
+# define ESC    53
+# define LEFT   123
+# define RIGHT  124
 
-#define PI 3.14159265358979323846
+# define PI     3.14159265359
 
 typedef struct s_player
 {
-    float  x;
-    float  y;
-    float  angle;
-    float  speed;
-    bool    key_up;
-    bool    key_down;
-    bool    key_left;
-    bool    key_right;
-    bool    rot_left;
-    bool    rot_right;
-}   t_player;
+	float	x;
+	float	y;
+	float	angle;
+	float	speed;
+	bool	key_up;
+	bool	key_down;
+	bool	key_left;
+	bool	key_right;
+	bool	rot_left;
+	bool	rot_right;
+}	t_player;
 
 typedef struct s_game
 {
-    void    *mlx;
-    void    *win;
-    void    *img;
-    char    *data;
-    int     bpp;
-    int     size_line;
-    int     endian;
-    char    **map;
-    t_player    player;
-}   t_game;
+	void		*mlx;
+	void		*win;
+	void		*img;
+	char		*data;
+	int			bpp;
+	int			size_line;
+	int			endian;
+	char		**map;
+	t_player	player;
+}	t_game;
 
-// Function prototypes
+// ============================== player.c ============================= //
+void	key_press(int keycode, t_player *player);
+void	key_release(int keycode, t_player *player);
+void	move_player(t_player *player);
 
-// player.c
-void key_press(int keycode, t_player *player);
-void key_release(int keycode, t_player *player);
-void move_player(t_player *player);
+// ============================== image.c ============================== //
+void	put_pixel(t_game *game, int x, int y, int color);
+void	draw_square(t_game *game, int x, int y, int size, int color);
+void	clear_image(t_game *game);
 
-// image.c
-void put_pixel(t_game *game, int x, int y, int color);
-void draw_square(t_game *game, int x, int y, int size, int color);
-void clear_image(t_game *game);
+// ============================== map.c ================================ //
+char	**get_map(void);
+void	draw_map(t_game *game);
 
-// map.c
-char **get_map(void);
-void draw_map(t_game *game);
+// ============================== raycast.c ============================ //
+void	draw_line(t_game *game, t_player *player, float start_x, int i);
+int		draw_loop(t_game *game);
 
-// raycast.c
-void draw_line(t_game *game, t_player *player, float start_x, int i);
-int draw_loop(t_game *game);
+// ============================== utils.c ============================== //
+bool	touch_wall(t_game *game, float px, float py);
+float	distance(float dx, float dy);
+float	fix_fish(t_game *game, float x1, float y1, float x2, float y2);
 
-// utils.c
-bool touch_wall(t_game *game, float px, float py);
-float distance(float dx, float dy);
-float fix_fish(t_game *game, float x1, float y1, float x2, float y2);
-
-// init.c
-void init_game(t_game *game);
-void init_player(t_player *player);
+// ============================== init.c =============================== //
+void	init_game(t_game *game);
+void	init_player(t_player *player);
 
 #endif
