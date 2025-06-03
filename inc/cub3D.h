@@ -2,6 +2,52 @@
 # define CUB3D_H
 
 # include "../libft/inc/libft.h"
+# include "../mlx/minilibx_opengl/mlx.h"
 # include <stdio.h>
+# include <stdlib.h>
+# include <stdbool.h>
+# include <math.h>
+
+# define WIDTH 1280
+# define HEIGHT 720
+# define BLOCK 64
+# define DEBGUG 1
+
+# define ESC 53
+# define W 13
+# define A 0
+# define S 1
+# define D 2
+# define LEFT 123
+# define RIGHT 124
+
+#define PI 3.14159265358979323846
+
+typedef struct s_player
+{
+    float  x;
+    float  y;
+    float  angle;
+    float  speed;
+    bool    key_up;
+    bool    key_down;
+    bool    key_left;
+    bool    key_right;
+    bool    rot_left;
+    bool    rot_right;
+}   t_player;
+
+typedef struct s_game
+{
+    void    *mlx;
+    void    *win;
+    void    *img;
+    char    *data;
+    int     bpp;
+    int     size_line;
+    int     endian;
+    char    **map;
+    t_player    player;
+}   t_game;
 
 #endif
