@@ -6,13 +6,13 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 15:25:36 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/05 15:38:49 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/05 16:09:31 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3D.h"
 
-void	exit_with_error(t_game *game, const char *msg)
+void	exit_with_error(t_game *game, char *msg)
 {
 	ft_putstr_fd("Error\n", 2);
 	if (msg)

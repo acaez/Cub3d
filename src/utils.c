@@ -7,18 +7,6 @@ bool	touch_wall(t_game *game, float px, float py)
 
 	x = px / BLOCK;
 	y = py / BLOCK;
-	if (game->map[y][x] == '1')
-		return (true);
-	return (false);
-}
-
-bool	touch_wall2(t_game *game, float px, float py)
-{
-	int	x;
-	int	y;
-
-	x = px / BLOCK;
-	y = py / BLOCK;
 	if (y < 0 || !game->map[y])
 		return (true);
 	if (x < 0 || x >= (int)ft_strlen(game->map[y]))

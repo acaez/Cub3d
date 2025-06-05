@@ -12,11 +12,11 @@ int	main(int argc, char **argv)
 	ft_memset(&game, 0, sizeof(t_game));
 	if (!parse_cub_file(&config, argv[1]))
 		exit_with_error(&game, "Invalid .cub file");
-	game.config = config;
+	game.config = &config;
 	init_game(&game);
 	init_player(&game.player, &game);
-	mlx_hook(game.win, 2, 0, (void *)key_press, &game.player);
-	mlx_hook(game.win, 3, 0, (void *)key_release, &game.player);
+	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
+	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
 	mlx_loop_hook(game.mlx, draw_loop, &game);
 	mlx_loop(game.mlx);
 	if (game.img)

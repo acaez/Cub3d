@@ -1,25 +1,29 @@
 #include "../inc/cub3D.h"
 
-void	key_press(int keycode, t_player *player)
+int	key_release(int keycode, void *param)
 {
+	t_player	*player = (t_player *)param;
+
 	if (keycode == W)
-		player->key_up = true;
+		player->key_up = false;
 	if (keycode == S)
-		player->key_down = true;
+		player->key_down = false;
 	if (keycode == A)
-		player->key_left = true;
+		player->key_left = false;
 	if (keycode == D)
-		player->key_right = true;
+		player->key_right = false;
 	if (keycode == LEFT)
-		player->rot_left = true;
+		player->rot_left = false;
 	if (keycode == RIGHT)
-		player->rot_right = true;
-	if (keycode == ESC)
-		exit_game(player->game, NULL);
+		player->rot_right = false;
+
+	return (0);
 }
 
-void	key_release(int keycode, t_player *player)
+int	key_press(int keycode, void *param)
 {
+	t_player	*player = (t_player *)param;
+
 	if (keycode == W)
 		player->key_up = false;
 	if (keycode == S)
