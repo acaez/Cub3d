@@ -1,5 +1,17 @@
 #include "../inc/cub3D.h"
 
+void	clear_image(t_game *game)
+{
+	int	i;
+
+	i = 0;
+	while (i < WIDTH * HEIGHT * (game->bpp / 8))
+	{
+		game->data[i] = 0;
+		i++;
+	}
+}
+
 void	put_pixel(t_game *game, int x, int y, int color)
 {
 	int	index;
@@ -27,7 +39,7 @@ void	draw_square(t_game *game, int x, int y, int size, int color)
 	i = 0;
 	while (i < size)
 	{
-		put_pixel(game, x + i, y + size, color);
+		put_pixel(game, x + i, y + size - 1, color);
 		i++;
 	}
 	j = 0;
@@ -39,14 +51,15 @@ void	draw_square(t_game *game, int x, int y, int size, int color)
 	j = 0;
 	while (j < size)
 	{
-		put_pixel(game, x + size, y + j, color);
+		put_pixel(game, x + size - 1, y + j, color);
 		j++;
 	}
 }
 
 void	draw_filled_square(t_game *game, int x, int y, int size, int color)
 {
-	int	i, j;
+	int	i;
+	int	j;
 
 	j = 0;
 	while (j < size)
@@ -58,17 +71,5 @@ void	draw_filled_square(t_game *game, int x, int y, int size, int color)
 			i++;
 		}
 		j++;
-	}
-}
-
-void	clear_image(t_game *game)
-{
-	int	i;
-
-	i = 0;
-	while (i < WIDTH * HEIGHT * (game->bpp / 8))
-	{
-		game->data[i] = 0;
-		i++;
 	}
 }

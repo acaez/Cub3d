@@ -1,26 +1,19 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/05 15:25:36 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/05 16:09:31 by matsauva         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../inc/cub3D.h"
 
-void	exit_with_error(t_game *game, char *msg)
+void	free_map(char **map)
 {
-	ft_putstr_fd("Error\n", 2);
-	if (msg)
-		ft_putendl_fd(msg, 2);
-	exit_game(game, 1);  // Error exit
+	int	i;
+	
+	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
 }
 
-void	exit_game(t_game *game, int exit_code)
+static void	exit_game(t_game *game, int exit_code)
 {
 	if (game)
 	{
@@ -28,7 +21,7 @@ void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_image(game->mlx, game->img);
 		if (game->win)
 			mlx_destroy_window(game->mlx, game->win);
-#ifdef __linux__
+#ifdef LINUX
 		if (game->mlx)
 			mlx_destroy_display(game->mlx);
 #endif
@@ -38,5 +31,24 @@ void	exit_game(t_game *game, int exit_code)
 			free_map(game->map);
 	}
 	exit(exit_code);
+}
+
+void	exit_error(t_game *game, char *msg)
+{
+	ft_putstr_fd("Error\n", 2);
+	if (msg)
+		ft_putendl_fd(msg, 2);
+	exit_game(game, 1);
+}
+
+int	close_window(t_game *game)
+{
+	if (game->win)
+	{
+		mlx_destroy_window(game->mlx, game->win);
+		game->win = NULL;
+	}
+	exit_game(game, 0);
+	return (0);
 }
 
