@@ -44,6 +44,23 @@ void	draw_square(t_game *game, int x, int y, int size, int color)
 	}
 }
 
+void	draw_filled_square(t_game *game, int x, int y, int size, int color)
+{
+	int	i, j;
+
+	j = 0;
+	while (j < size)
+	{
+		i = 0;
+		while (i < size)
+		{
+			put_pixel(game, x + i, y + j, color);
+			i++;
+		}
+		j++;
+	}
+}
+
 void	clear_image(t_game *game)
 {
 	int	i;

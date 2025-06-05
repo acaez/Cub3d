@@ -11,7 +11,9 @@
 # define WIDTH  1280
 # define HEIGHT 720
 # define BLOCK  64
-# define DEBGUG 1
+# define DEBUG 1
+# define COLLISION_RADIUS 10.0
+
 
 # define W      13
 # define A      0
@@ -29,12 +31,14 @@ typedef struct s_player
 	float	y;
 	float	angle;
 	float	speed;
+	float	rot_speed;
 	bool	key_up;
 	bool	key_down;
 	bool	key_left;
 	bool	key_right;
 	bool	rot_left;
 	bool	rot_right;
+	struct s_game *game;
 }	t_player;
 
 typedef struct s_game

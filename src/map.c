@@ -46,3 +46,38 @@ void	draw_map(t_game *game)
 		y++;
 	}
 }
+
+#define MINIMAP_SCALE 0.1
+
+void	draw_minimap(t_game *game)
+{
+	char	**map;
+	int		x;
+	int		y;
+	int		color;
+	int		block_size;
+	int		px;
+	int		py;
+
+	map = game->map;
+	block_size = BLOCK * MINIMAP_SCALE;
+	y = 0;
+	while (map && map[y])
+	{
+		x = 0;
+		while (map[y][x])
+		{
+			if (map[y][x] == '1')
+			{
+				color = 0xFFFFFF;
+				draw_filled_square(game, x * block_size, y * block_size, block_size, color);
+			}
+			x++;
+		}
+		y++;
+	}
+	px = game->player.x * MINIMAP_SCALE;
+	py = game->player.y * MINIMAP_SCALE;
+	draw_filled_square(game, px - 2, py - 2, 4, 0xFF0000);
+}
+

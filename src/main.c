@@ -18,3 +18,30 @@ int	main(void)
 	//free(game.mlx);
 	return (0);
 }
+
+int	main2(void)
+{
+	t_game	game;
+
+	init_game(&game);
+	init_player(&game.player);
+	mlx_hook(game.win, 2, 0, (void *)key_press, &game.player);
+	mlx_hook(game.win, 3, 0, (void *)key_release, &game.player);
+	mlx_loop_hook(game.mlx, draw_loop, &game);
+	mlx_loop(game.mlx);
+
+	if (game.img)
+		mlx_destroy_image(game.mlx, game.img);
+	if (game.win)
+		mlx_destroy_window(game.mlx, game.win);
+#ifdef __linux__
+	if (game.mlx)
+		mlx_destroy_display(game.mlx);
+#endif
+	if (game.mlx)
+		free(game.mlx);
+	if (game.map)
+		free_map(game.map);
+
+	return (0);
+}

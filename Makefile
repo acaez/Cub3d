@@ -57,7 +57,7 @@ $(LIBFT):
 
 $(CMLX):
 	@echo "compiling minilibx"
-	@$(MAKE) -C $(GMLX) 2>/dev/null 1>/dev/null
+	@$(MAKE) -C $(GMLX)  2>/dev/null 1>/dev/null
 
 clean:
 	@echo "clean object file"

@@ -17,12 +17,12 @@ void	draw_line(t_game *game, t_player *player, float start_x, int i)
 	sin_angle = sin(start_x);
 	while (!touch_wall(game, ray_x, ray_y))
 	{
-		if (DEBGUG)
+		if (DEBUG)
 			put_pixel(game, ray_x, ray_y, 0x00FF00);
 		ray_x += cos_angle;
 		ray_y += sin_angle;
 	}
-	if (!DEBGUG)
+	if (!DEBUG)
 	{
 		dist = fix_fish(game, player->x, player->y, ray_x, ray_y);
 		height = (BLOCK / dist) * (WIDTH / 2);
@@ -50,7 +50,7 @@ int	draw_loop(t_game *game)
 	player = &game->player;
 	move_player(&game->player);
 	clear_image(game);
-	if (DEBGUG)
+	if (DEBUG)
 	{
 		draw_square(game, game->player.x, game->player.y, 10, 0xFF0000);
 		draw_map(game);
