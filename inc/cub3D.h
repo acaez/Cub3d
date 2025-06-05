@@ -11,9 +11,8 @@
 # define WIDTH  1280
 # define HEIGHT 720
 # define BLOCK  64
-# define DEBUG 1
+# define DEBUG 	1
 # define COLLISION_RADIUS 10.0
-
 
 # define W      13
 # define A      0
@@ -38,7 +37,7 @@ typedef struct s_player
 	bool	key_right;
 	bool	rot_left;
 	bool	rot_right;
-	struct s_game *game;
+	struct s_game *game; // optional
 }	t_player;
 
 typedef struct s_game
@@ -52,6 +51,7 @@ typedef struct s_game
 	int			endian;
 	char		**map;
 	t_player	player;
+	t_config 	config;
 }	t_game;
 
 typedef struct s_config
@@ -92,6 +92,6 @@ float	fix_fish(t_game *game, float x1, float y1, float x2, float y2);
 
 // ============================== init.c =============================== //
 void	init_game(t_game *game);
-void	init_player(t_player *player);
+void	init_player(t_player *player, t_game *game);
 
 #endif
