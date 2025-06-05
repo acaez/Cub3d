@@ -54,6 +54,19 @@ typedef struct s_game
 	t_player	player;
 }	t_game;
 
+typedef struct s_config
+{
+	char	*no_path;
+	char	*so_path;
+	char	*we_path;
+	char	*ea_path;
+	int		floor_color;   // Format 0xRRGGBB
+	int		ceiling_color; // Format 0xRRGGBB
+	char	**map;
+	int		map_start_line; // index of map start
+}	t_config;
+
+
 // ============================== player.c ============================= //
 void	key_press(int keycode, t_player *player);
 void	key_release(int keycode, t_player *player);

@@ -19,9 +19,18 @@ int	main(void)
 	return (0);
 }
 
-int	main2(void)
+int	main(int argc, char **argv)
 {
+	if (argc != 2 || !ft_strnstr(argv[1], ".cub", ft_strlen(argv[1])))
+		return (printf("Usage: %s map.cub\n", argv[0]), 1);
+
 	t_game	game;
+	t_config config;
+
+	if (!parse_cub_file(&config, argv[1]))
+		exit_with_error(&game, "Invalid .cub file");
+
+	game.config = config;
 
 	init_game(&game);
 	init_player(&game.player);
