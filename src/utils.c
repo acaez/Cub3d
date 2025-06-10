@@ -36,16 +36,5 @@ float	fix_fish(t_game *game, float x1, float y1, float x2, float y2)
 	return (fish);
 }
 
-void	free_map(char **map)
-{
-	int	i;
-	
-	i = 0;
-	while (map[i])
-	{
-		free(map[i]);
-		i++;
-	}
-	free(map);
-}
+
 
