@@ -23,4 +23,4 @@ bool    line_has_only_valid(char *s)
 		s++;
 	}
 	return (true);
-}%
+}

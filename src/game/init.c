@@ -1,4 +1,4 @@
-#include "../inc/cub3D.h"
+#include "../../inc/cub3D.h"
 
 void	init_key(t_game *game)
 {
@@ -40,8 +40,6 @@ void	init_config(t_config *cfg)
 	cfg->map = NULL;
 	cfg->map_width = -1;
 	cfg->map_height = -1;
-}
-
 }
 
 void	init_game(t_game *game)

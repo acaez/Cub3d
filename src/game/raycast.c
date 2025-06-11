@@ -1,4 +1,4 @@
-#include "../inc/cub3D.h"
+#include "../../inc/cub3D.h"
 
 static void	draw_ceiling_floor(t_game *game)
 {

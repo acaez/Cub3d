@@ -1,4 +1,4 @@
-#include "../inc/cub3D.h"
+#include "../../inc/cub3D.h"
 
 void	clear_image(t_game *game)
 {

@@ -59,13 +59,20 @@ static bool	map_contains_only_valid_chars(char **map)
 
 bool    validate_map(char **map)
 {
-    size_t  max_len;
-
     if (!map_contains_only_valid_chars(map))
+    {
+        printf("Map validation failed: contains invalid characters\n");
         return (false);
+    }
     if (!check_player_count(map))
+    {
+        printf("Map validation failed: player count issue\n");
         return (false);
+    }
     if (!validate_closed_map(map))
+    {
+        printf("Map validation failed: map is not properly closed\n");
         return (false);
+    }
     return (true);
 }

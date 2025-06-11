@@ -1,4 +1,4 @@
-#include "../inc/../cub3D.h"
+#include "../../inc/cub3D.h"
 
 size_t  get_max_line_len(char **map)
 {

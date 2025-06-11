@@ -69,6 +69,8 @@ typedef struct s_config
 	int		ceiling_color; // Format 0xRRGGBB
 	char	**map;
 	int		map_start; // index of map start
+	int		map_width;  // Width of the map
+	int		map_height; // Height of the map
 }	t_config;
 
 typedef struct s_game
@@ -102,6 +104,7 @@ void	draw_filled_square(t_game *game, int x, int y, int size, int color);
 // ============================== init.c ============================ //
 void	init_key(t_game *game);
 void	init_player(t_player *player, t_game *game);
+void	init_config(t_config *cfg);
 void	init_game(t_game *game);
 // ============================== key.c ============================== //
 int		key_press(int keycode, t_game *game);
@@ -116,5 +119,21 @@ void	move_player(t_player *player);
 float	distance(float dx, float dy);
 float	fix_fish(t_game *game, float x1, float y1, float x2, float y2);
 bool	touch_wall(t_game *game, float px, float py);
+
+// ============================== parse.c ============================== //
+bool    parse_cub_file(t_config *cfg, char *path);
+
+// ============================== parse_utils.c ============================== //
+char	*ft_strtrim_free(char *str, const char *set);
+char	**ft_realloc_tab(char **old, int new_size);
+bool    is_map_line(const char *line);
+void    set_texture(t_config *cfg, char *id, char *path);
+int     parse_color(char *line);
+
+// ============================== valid_utils.c ============================== //
+bool    is_inside_map(char **map, int y, int x);
+bool    is_open_char(char c);
+bool    line_has_only_valid(char *s);
+bool    validate_map(char **map);
 
 #endif

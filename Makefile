@@ -6,17 +6,22 @@ INC_DIR  = inc
 LIBFT_DIR = libft
 MLX_DIR  = mlx
 
-SRC      = exit.c \
-		   game.c \
-		   image.c \
-		   init.c \
-		   keys.c \
-		   main.c \
-		   map.c \
-		   move.c \
-		   utils.c \
+SRC      = main.c \
+		   game/exit.c \
+		   game/init.c \
+		   game/raycast.c \
+		   parsing/get_map.c \
+		   parsing/map.c \
+		   parsing/parse.c \
+		   parsing/valid.c \
+		   player/draw.c \
+		   player/keys.c \
+		   player/move.c \
+		   utils/parse_utils.c \
+		   utils/utils.c \
+		   utils/valid_utils.c \
 
-OBJ    = $(SRC:%.c=$(OBJ_DIR)/%.o)
+OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 
 LIBFT   = $(LIBFT_DIR)/libft.a
 
