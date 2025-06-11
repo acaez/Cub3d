@@ -17,9 +17,10 @@ SRC      = main.c \
 		   player/draw.c \
 		   player/keys.c \
 		   player/move.c \
+		   utils/draw_utils.c \
 		   utils/parse_utils.c \
 		   utils/utils.c \
-		   utils/valid_utils.c \
+		   utils/valide_utils.c \
 
 OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 

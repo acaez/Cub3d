@@ -13,6 +13,23 @@ void	init_key(t_game *game)
 #endif
 }
 
+void	init_mlx(t_game *game)
+{
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		exit_error(game, "mlx_init() failed");
+	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
+	if (!game->win)
+		exit_error(game, "mlx_new_window() failed");
+	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+	if (!game->img)
+		exit_error(game, "mlx_new_image() failed");
+	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
+	if (!game->data)
+		exit_error(game, "mlx_get_data_addr() failed");
+	game->debug_mode = DEBUG;
+}
+
 void	init_player(t_player *player, t_game *game)
 {
 	player->x = WIDTH / 2;
@@ -27,6 +44,8 @@ void	init_player(t_player *player, t_game *game)
 	player->rot_left = false;
 	player->rot_right = false;
 	player->game = game;
+	setup_pos(game);
+	game->map = game->config.map;
 }
 
 void	init_config(t_config *cfg)
@@ -42,27 +61,18 @@ void	init_config(t_config *cfg)
 	cfg->map_height = -1;
 }
 
-void	init_game(t_game *game)
+void	init_game(t_game *game, int argc, char **argv)
 {
+	if (argc != 2)
+		exit_error(NULL, "Usage: ./cub3D <map.cub>");
 	ft_memset(game, 0, sizeof(t_game));
-	game->mlx = mlx_init();
-	if (!game->mlx)
-		exit_error(game, "Error: mlx_init() failed");
-	game->map = get_map();
-	if (!game->map)
-		exit_error(game, "Error: Failed to load the map");
-	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-	if (!game->win)
-		exit_error(game, "Error: mlx_new_window() failed");
-	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (!game->img)
-		exit_error(game, "Error: mlx_new_image() failed");
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-	if (!game->data)
-		exit_error(game, "Error: mlx_get_data_addr() failed");
-	game->debug_mode = DEBUG; // Initialize debug mode from the DEBUG macro
-	init_key(game);
+	init_config(&game->config);
+	if (!parse_cub_file(&game->config, argv[1]))
+		exit_error(game, "Failed to parse map file");
+	if (!validate_map(game->config.map))
+		exit_error(game, "Invalid map");
+	init_mlx(game);
 	init_player(&game->player, game);
+	init_key(game);
 	mlx_loop_hook(game->mlx, game_loop, game);
 }
-
