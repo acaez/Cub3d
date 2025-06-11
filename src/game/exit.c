@@ -13,6 +13,20 @@ void	free_map(char **map)
 	free(map);
 }
 
+void	free_config(t_config *cfg)
+{
+	if (cfg->no_path)
+		free(cfg->no_path);
+	if (cfg->so_path)
+		free(cfg->so_path);
+	if (cfg->we_path)
+		free(cfg->we_path);
+	if (cfg->ea_path)
+		free(cfg->ea_path);
+	if (cfg->map)
+		free(cfg->map);
+}
+
 static void	exit_game(t_game *game, int exit_code)
 {
 	if (game)

@@ -26,7 +26,7 @@ bool	touch_wall(t_game *game, float px, float py)
 
 	x = (int)(px / BLOCK);
 	y = (int)(py / BLOCK);
-	if (y < 0 || y >= 11 || !game->map)  // 11 is the map height from get_map() modify as needed after
+	if (y < 0 || !game->map[y])
 		return (true);
 	if (x < 0 || x >= (int)ft_strlen(game->map[y]))
 		return (true);

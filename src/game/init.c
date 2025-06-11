@@ -15,8 +15,8 @@ void	init_key(t_game *game)
 
 void	init_player(t_player *player, t_game *game)
 {
-	player->x = 
-	player->y = 
+	player->x = WIDTH / 2;
+	player->y = HEIGHT / 2;
 	player->angle = PI / 2;
 	player->speed = 3.0;
 	player->rot_speed = 0.05;
@@ -27,6 +27,21 @@ void	init_player(t_player *player, t_game *game)
 	player->rot_left = false;
 	player->rot_right = false;
 	player->game = game;
+}
+
+void	init_config(t_config *cfg)
+{
+	cfg->no_path = NULL;
+	cfg->so_path = NULL;
+	cfg->we_path = NULL;
+	cfg->ea_path = NULL;
+	cfg->floor_color = -1;
+	cfg->ceiling_color = -1;
+	cfg->map = NULL;
+	cfg->map_width = -1;
+	cfg->map_height = -1;
+}
+
 }
 
 void	init_game(t_game *game)
