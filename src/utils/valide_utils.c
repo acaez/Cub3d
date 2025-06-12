@@ -13,14 +13,3 @@ bool is_open_char(char c)
 {
 	return ft_strchr("0NSEW", c) != NULL;
 }
-
-bool    line_has_only_valid(char *s)
-{
-	while (*s)
-	{
-		if (!ft_strchr(" 01NSEW", *s))
-			return (false);
-		s++;
-	}
-	return (true);
-}

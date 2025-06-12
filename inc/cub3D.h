@@ -117,6 +117,7 @@ void	draw_minimap(t_game *game);
 bool	parse_cub_file(t_config *cfg, char *path);
 // ------------------------------ valid.c ----------------------------- //
 bool    validate_map(char **map);
+bool	validate_config(t_config *cfg);
 
 // ============================== PLAYER ============================== //
 // ------------------------------ draw.c ------------------------------ //
@@ -137,9 +138,9 @@ void	setup_pos(t_game *game);
 // ------------------------------ pars_utils.c ------------------------ //
 char	*ft_strtrim_free(char *str, const char *set);
 char	**ft_realloc_tab(char **old, int new_size);
-bool    is_map_line(const char *line);
-int 	parse_color(char *line);
-void    set_texture(t_config *cfg, char *id, char *path);
+bool    is_map_line(char *line);
+bool	parse_color(char *line, int *color);
+bool	set_texture(t_config *cfg, const char *id, const char *path);
 // ------------------------------ utils.c ----------------------------- //
 float	distance(float dx, float dy);
 float	fix_fish(t_game *game, float x1, float y1, float x2, float y2);

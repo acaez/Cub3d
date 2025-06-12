@@ -47,19 +47,55 @@ static bool	check_player_count(char **map)
 static bool	map_contains_only_valid_chars(char **map)
 {
 	int	y = 0;
+	int	x;
 
 	while (map[y])
 	{
-		if (!line_has_only_valid(map[y]))
-			return (false);
+		x = 0;
+		while (map[y][x])
+		{
+			if (!ft_strchr(" 01NSEW", map[y][x]))
+			{
+				printf("Invalid char in map: map[%d][%d] = '%c' (ascii %d)\n",
+					y, x, map[y][x], (unsigned char)map[y][x]);
+				return (false);
+			}
+			x++;
+		}
 		y++;
+	}
+	return (true);
+}
+
+bool	validate_config(t_config *cfg)
+{
+	if (!cfg->no_path || !cfg->so_path ||
+		!cfg->we_path || !cfg->ea_path)
+	{
+		printf("Config validation failed: missing texture path(s)\n");
+		return (false);
+	}
+	if (cfg->floor_color == -1 || cfg->ceiling_color == -1)
+	{
+		printf("Config validation failed: missing floor or ceiling color\n");
+		return (false);
+	}
+	if (cfg->floor_color == cfg->ceiling_color)
+	{
+		printf("Config validation failed: floor and ceiling colors are identical\n");
+		return (false);
+	}
+	if (!cfg->map)
+	{
+		printf("Config validation failed: map is missing or has invalid dimensions\n");
+		return (false);
 	}
 	return (true);
 }
 
 bool    validate_map(char **map)
 {
-    if (!map_contains_only_valid_chars(map))
+	if (!map_contains_only_valid_chars(map))
     {
         printf("Map validation failed: contains invalid characters\n");
         return (false);
