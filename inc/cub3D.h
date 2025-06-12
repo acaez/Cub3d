@@ -94,15 +94,16 @@ void	free_map(char **map);
 void	free_config(t_config *cfg);
 void	exit_error(t_game *game, char *msg);
 int		close_window(t_game *game);
+// ------------------------------ game.c ------------------------------ //
+int	game_loop(t_game *game);
 // ------------------------------ init.c ------------------------------ //
 void	init_key(t_game *game);
 void	init_mlx(t_game *game);
 void	init_player(t_player *player, t_game *game);
 void	init_config(t_config *cfg);
 void	init_game(t_game *game, int argc, char **argv);
-// ------------------------------ raycast.c --------------------------- //
+// ------------------------------ scene.c --------------------------- //
 void	draw_scene(t_game *game);
-int		game_loop(t_game *game);
 
 // ============================== PARSING ============================= //
 // ------------------------------ get_map.c --------------------------- //
@@ -125,12 +126,21 @@ void	clear_image(t_game *game);
 void	put_pixel(t_game *game, int x, int y, int color);
 void	draw_square(t_game *game, int x, int y, int size, int color);
 void	draw_filled_square(t_game *game, int x, int y, int size, int color);
+void	draw_player_direction(t_game *game);
 // ------------------------------ keys.c ------------------------------ //
 int		key_press(int keycode, t_game *game);
 int		key_release(int keycode, t_game *game);
 // ------------------------------ move.c ------------------------------ //
 void	move_player(t_player *player);
 
+// ============================== RAYCAST ============================= //
+// ------------------------------ dda.c ------------------------------- //
+void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y,
+				int map_x, int map_y, float *side_dist, float *delta_dist);
+void	perform_dda(t_game *game, float *side_dist, float *delta_dist,
+						int *map_pos, int *hit_info);
+// ------------------------------ raycast.c --------------------------- //
+void	raycast(t_game *game);
 // ============================== UTILS =============================== //
 // ------------------------------ draw_utils.c ------------------------ //
 void	setup_dir(t_game *game, char direction);
@@ -143,7 +153,6 @@ bool	parse_color(char *line, int *color);
 bool	set_texture(t_config *cfg, const char *id, const char *path);
 // ------------------------------ utils.c ----------------------------- //
 float	distance(float dx, float dy);
-float	fix_fish(t_game *game, float x1, float y1, float x2, float y2);
 bool	touch_wall(t_game *game, float px, float py);
 // ------------------------------ valide_utils.c ---------------------- //
 bool 	is_inside_map(char **map, int y, int x);

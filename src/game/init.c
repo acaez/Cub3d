@@ -36,6 +36,19 @@ void	print_config_debug(t_config *cfg)
 // If a function is only used in one .c file, make it static.
 // This avoids declaring it in the .h file and keeps it private.
 
+void	init_config(t_config *cfg)
+{
+	cfg->no_path = NULL;
+	cfg->so_path = NULL;
+	cfg->we_path = NULL;
+	cfg->ea_path = NULL;
+	cfg->floor_color = -1;
+	cfg->ceiling_color = -1;
+	cfg->map = NULL;
+	cfg->map_width = -1;
+	cfg->map_height = -1;
+}
+
 void	init_key(t_game *game)		// Should be static
 {
 #ifdef LINUX
@@ -84,18 +97,6 @@ void	init_player(t_player *player, t_game *game)
 	game->map = game->config.map;
 }
 
-void	init_config(t_config *cfg)
-{
-	cfg->no_path = NULL;
-	cfg->so_path = NULL;
-	cfg->we_path = NULL;
-	cfg->ea_path = NULL;
-	cfg->floor_color = -1;
-	cfg->ceiling_color = -1;
-	cfg->map = NULL;
-	cfg->map_width = -1;
-	cfg->map_height = -1;
-}
 
 void	init_game(t_game *game, int argc, char **argv)
 {

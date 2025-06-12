@@ -8,8 +8,9 @@ MLX_DIR  = mlx
 
 SRC      = main.c \
 		   game/exit.c \
+		   game/game.c \
 		   game/init.c \
-		   game/raycast.c \
+		   game/scene.c \
 		   parsing/get_map.c \
 		   parsing/map.c \
 		   parsing/parse.c \
@@ -17,6 +18,8 @@ SRC      = main.c \
 		   player/draw.c \
 		   player/keys.c \
 		   player/move.c \
+		   raycast/dda.c \
+		   raycast/raycast.c \
 		   utils/draw_utils.c \
 		   utils/parse_utils.c \
 		   utils/utils.c \

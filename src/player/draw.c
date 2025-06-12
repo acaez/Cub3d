@@ -73,3 +73,20 @@ void	draw_filled_square(t_game *game, int x, int y, int size, int color)
 		j++;
 	}
 }
+
+void	draw_player_direction(t_game *game)
+{
+	int		i;
+	float	px;
+	float	py;
+
+	i = 0;
+	draw_filled_square(game, game->player.x - 5, game->player.y - 5, 10, 0x00FF00);
+	while (i < 20)
+	{
+		px = game->player.x + cos(game->player.angle) * i;
+		py = game->player.y + sin(game->player.angle) * i;
+		put_pixel(game, px, py, 0xFFFF00);
+		i++;
+	}
+}
