@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 13:14:54 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 13:15:13 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/cub3D.h"
 
 char	*ft_strtrim_free(char *str, const char *set)
 {
-	char *trimmed;
+	char	*trimmed;
 
 	trimmed = ft_strtrim(str, set);
 	free(str);
@@ -12,8 +24,9 @@ char	*ft_strtrim_free(char *str, const char *set)
 char	**ft_realloc_tab(char **old, int new_size)
 {
 	char	**new_tab;
-	int		i = 0;
+	int		i;
 
+	i = 0;
 	new_tab = ft_calloc(new_size + 1, sizeof(char *));
 	while (old[i])
 	{
@@ -26,9 +39,11 @@ char	**ft_realloc_tab(char **old, int new_size)
 
 bool	is_map_line(char *line)
 {
+	const char	*p;
+
 	if (!line)
 		return (false);
-	const char *p = line;
+	p = line;
 	while (*p == ' ')
 		p++;
 	return (*p == '1');

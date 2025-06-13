@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   valid.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 14:39:16 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 16:00:28 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/cub3D.h"
 
 static bool	validate_closed_map(char **map)
@@ -13,9 +25,9 @@ static bool	validate_closed_map(char **map)
 		{
 			if (is_open_char(map[y][x]) &&
 				(!is_inside_map(map, y - 1, x) || map[y - 1][x] == ' ' ||
-				 !is_inside_map(map, y + 1, x) || map[y + 1][x] == ' ' ||
-				 !is_inside_map(map, y, x - 1) || map[y][x - 1] == ' ' ||
-				 !is_inside_map(map, y, x + 1) || map[y][x + 1] == ' '))
+					!is_inside_map(map, y + 1, x) || map[y + 1][x] == ' ' ||
+					!is_inside_map(map, y, x - 1) || map[y][x - 1] == ' ' ||
+					!is_inside_map(map, y, x + 1) || map[y][x + 1] == ' '))
 				return (false);
 			x++;
 		}
@@ -26,10 +38,12 @@ static bool	validate_closed_map(char **map)
 
 static bool	check_player_count(char **map)
 {
-	int	y = 0;
+	int	y;
 	int	x;
-	int	count = 0;
+	int	count;
 
+	y = 0;
+	count = 0;
 	while (map[y])
 	{
 		x = 0;
@@ -46,20 +60,17 @@ static bool	check_player_count(char **map)
 
 static bool	map_contains_only_valid_chars(char **map)
 {
-	int	y = 0;
+	int	y;
 	int	x;
 
+	y = 0;
 	while (map[y])
 	{
 		x = 0;
 		while (map[y][x])
 		{
 			if (!ft_strchr(" 01NSEW", map[y][x]))
-			{
-				printf("Invalid char in map: map[%d][%d] = '%c' (ascii %d)\n",
-					y, x, map[y][x], (unsigned char)map[y][x]);
 				return (false);
-			}
 			x++;
 		}
 		y++;
@@ -67,48 +78,48 @@ static bool	map_contains_only_valid_chars(char **map)
 	return (true);
 }
 
-bool	validate_config(t_config *cfg)
+bool	validate_config(t_config *cfg, char **err)
 {
-	if (!cfg->no_path || !cfg->so_path ||
-		!cfg->we_path || !cfg->ea_path)
+	if (!cfg->no_path || !cfg->so_path
+		|| !cfg->we_path || !cfg->ea_path)
 	{
-		printf("Config validation failed: missing texture path(s)\n");
+		*err = ft_strdup(ERR_TEXTURE_PATHS);
 		return (false);
 	}
 	if (cfg->floor_color == -1 || cfg->ceiling_color == -1)
 	{
-		printf("Config validation failed: missing floor or ceiling color\n");
+		*err = ft_strdup(ERR_COLOR_MISSING);
 		return (false);
 	}
 	if (cfg->floor_color == cfg->ceiling_color)
 	{
-		printf("Config validation failed: floor and ceiling colors are identical\n");
+		*err = ft_strdup(ERR_COLOR_IDENTICAL);
 		return (false);
 	}
-	if (!cfg->map)
+	if (!cfg->map || cfg->map_width <= 2 || cfg->map_height <= 2)
 	{
-		printf("Config validation failed: map is missing or has invalid dimensions\n");
+		*err = ft_strdup(ERR_MAP_INVALID_DIM);
 		return (false);
 	}
 	return (true);
 }
 
-bool    validate_map(char **map)
+bool	validate_map(char **map, char **err)
 {
 	if (!map_contains_only_valid_chars(map))
-    {
-        printf("Map validation failed: contains invalid characters\n");
-        return (false);
-    }
-    if (!check_player_count(map))
-    {
-        printf("Map validation failed: player count issue\n");
-        return (false);
-    }
-    if (!validate_closed_map(map))
-    {
-        printf("Map validation failed: map is not properly closed\n");
-        return (false);
-    }
-    return (true);
+	{
+		*err = ft_strdup(ERR_MAP_INVALID_CHARS);
+		return (false);
+	}
+	if (!check_player_count(map))
+	{
+		*err = ft_strdup(ERR_PLAYER_COUNT);
+		return (false);
+	}
+	if (!validate_closed_map(map))
+	{
+		*err = ft_strdup(ERR_MAP_NOT_CLOSED);
+		return (false);
+	}
+	return (true);
 }

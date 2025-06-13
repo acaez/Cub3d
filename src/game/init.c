@@ -1,119 +1,77 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 11:53:48 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 15:44:45 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/cub3D.h"
 
-void	print_config_debug(t_config *cfg)
+static void	load_game(t_game *game, char *map_path, int debug_mode)
 {
-	printf("Config debug dump:\n");
-	printf("NO: %s\n", cfg->no_path);
-	printf("SO: %s\n", cfg->so_path);
-	printf("WE: %s\n", cfg->we_path);
-	printf("EA: %s\n", cfg->ea_path);
-	printf("Floor:   %06X\n", cfg->floor_color);
-	printf("Ceiling: %06X\n", cfg->ceiling_color);
-	printf("Map size: %d x %d\n", cfg->map_width, cfg->map_height);
-	printf("Map:\n");
-	if (!cfg->map)
+	char	*err;
+
+	err = NULL;
+	ft_memset(game, 0, sizeof(t_game));
+	game->debug_mode = debug_mode;
+	init_config(&game->config);
+	if (!parse_cub_file(&game->config, map_path, &err))
+		exit_error(game, err);
+	if (game->debug_mode)
 	{
-		printf("(null)\n");
+		printf("Parsing OK\n");
+		print_config(&game->config);
+		print_map(game->config.map);
+	}
+	if (!validate_config(&game->config, &err))
+		exit_error(game, err);
+	if (game->debug_mode)
+		printf("Config OK\n");
+	if (!validate_map(game->config.map, &err))
+		exit_error(game, err);
+	if (game->debug_mode)
+		printf("Map OK\n");
+}
+
+static void	parse_args(int argc, char **argv, int *map_idx, int *debug)
+{
+	if (argc < 2 || argc > 3)
+		exit_error(NULL, "Usage: ./cub3D <map.cub> [--debug]");
+	*debug = 0;
+	*map_idx = -1;
+	if (argc == 2)
+	{
+		*map_idx = 1;
 		return ;
 	}
-	int	y = 0;
-	while (cfg->map[y])
+	if (ft_strcmp(argv[1], "--debug") == 0)
 	{
-		int	x = 0;
-		while (cfg->map[y][x])
-		{
-			if (cfg->map[y][x] == ' ')
-				printf("*"); // to see spaces
-			else
-				printf("%c", cfg->map[y][x]);
-			x++;
-		}
-		printf("\n");
-		y++;
+		*debug = 1;
+		*map_idx = 2;
 	}
+	else if (ft_strcmp(argv[2], "--debug") == 0)
+	{
+		*debug = 1;
+		*map_idx = 1;
+	}
+	else
+		exit_error(NULL, "Usage: ./cub3D <map.cub> [--debug]");
 }
-
-// If a function is only used in one .c file, make it static.
-// This avoids declaring it in the .h file and keeps it private.
-
-void	init_config(t_config *cfg)
-{
-	cfg->no_path = NULL;
-	cfg->so_path = NULL;
-	cfg->we_path = NULL;
-	cfg->ea_path = NULL;
-	cfg->floor_color = -1;
-	cfg->ceiling_color = -1;
-	cfg->map = NULL;
-	cfg->map_width = -1;
-	cfg->map_height = -1;
-}
-
-void	init_key(t_game *game)		// Should be static
-{
-#ifdef LINUX
-	mlx_hook(game->win, 2, 1L<<0, key_press, game);
-	mlx_hook(game->win, 3, 1L<<1, key_release, game);
-	mlx_hook(game->win, 17, 0, close_window, game);
-#elif MACOS
-	mlx_hook(game->win, 2, 0, key_press, game);
-	mlx_hook(game->win, 3, 0, key_release, game);
-	mlx_hook(game->win, 17, 0, close_window, game);
-#endif
-}
-
-void	init_mlx(t_game *game)
-{
-	game->mlx = mlx_init();
-	if (!game->mlx)
-		exit_error(game, "mlx_init() failed");
-	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-	if (!game->win)
-		exit_error(game, "mlx_new_window() failed");
-	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (!game->img)
-		exit_error(game, "mlx_new_image() failed");
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-	if (!game->data)
-		exit_error(game, "mlx_get_data_addr() failed");
-	game->debug_mode = DEBUG;
-}
-
-void	init_player(t_player *player, t_game *game)
-{
-	player->x = -1;			// will be define in setup_pos
-	player->y = -1;			// will be define in setup_pos
-	player->angle = 0;		// will be define in setup_pos
-	player->speed = 3.0;
-	player->rot_speed = 0.05;
-	player->key_up = false;
-	player->key_down = false;
-	player->key_left = false;
-	player->key_right = false;
-	player->rot_left = false;
-	player->rot_right = false;
-	player->game = game;
-	setup_pos(game);
-	game->map = game->config.map;
-}
-
 
 void	init_game(t_game *game, int argc, char **argv)
 {
-	if (argc != 2)
-		exit_error(NULL, "Usage: ./cub3D <map.cub>");
-	ft_memset(game, 0, sizeof(t_game));
-	init_config(&game->config);
-	if (!parse_cub_file(&game->config, argv[1]))
-		exit_error(game, "Failed to parse map file");
-	printf("Parsing OK\n");
-	print_config_debug(&game->config);
-	if (!validate_config(&game->config))
-		exit_error(game, "Invalid configuration");
-	printf("Config OK\n");
-	if (!validate_map(game->config.map))
-		exit_error(game, "Invalid map");
-	printf("Map OK\n");
+	int	map_arg;
+	int	debug;
+
+	map_arg = -1;
+	debug = 0;
+	parse_args(argc, argv, &map_arg, &debug);
+	load_game(game, argv[map_arg], debug);
 	init_mlx(game);
 	init_player(&game->player, game);
 	init_key(game);

@@ -81,7 +81,8 @@ void	draw_player_direction(t_game *game)
 	float	py;
 
 	i = 0;
-	draw_filled_square(game, game->player.x - 5, game->player.y - 5, 10, 0x00FF00);
+	draw_filled_square(game, game->player.x - 5, game->player.y - 5, 10,
+			0x00FF00);
 	while (i < 20)
 	{
 		px = game->player.x + cos(game->player.angle) * i;

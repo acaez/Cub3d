@@ -37,10 +37,10 @@ void	draw_scene(t_game *game)
 {
 	draw_ceiling_floor(game);
 	raycast(game);
+	draw_minimap(game);
 	if (game->debug_mode)
 	{
 		draw_map(game);
-		draw_minimap(game);
 		draw_player_direction(game);
 	}
 }

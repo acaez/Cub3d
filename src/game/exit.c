@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 14:50:08 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 15:40:57 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/cub3D.h"
 
 void	free_map(char **map)
 {
 	int	i;
-	
+
 	i = 0;
 	while (map[i])
 	{
@@ -51,7 +63,10 @@ void	exit_error(t_game *game, char *msg)
 {
 	ft_putstr_fd("Error\n", 2);
 	if (msg)
+	{
 		ft_putendl_fd(msg, 2);
+		free(msg);
+	}
 	exit_game(game, 1);
 }
 
@@ -65,4 +80,3 @@ int	close_window(t_game *game)
 	exit_game(game, 0);
 	return (0);
 }
-

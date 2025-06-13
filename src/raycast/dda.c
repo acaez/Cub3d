@@ -1,7 +1,7 @@
 #include "../../inc/cub3D.h"
 
-void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y,
-				int map_x, int map_y, float *side_dist, float *delta_dist)
+void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y, int map_x,
+		int map_y, float *side_dist, float *delta_dist)
 {
 	if (ray_dir_x == 0)
 		delta_dist[0] = 1e30;
@@ -34,12 +34,12 @@ void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y,
 }
 
 void	perform_dda(t_game *game, float *side_dist, float *delta_dist,
-						int *map_pos, int *hit_info)
+		int *map_pos, int *hit_info)
 {
-	int	hit;
-	int	side;
-	int	map_x;
-	int	map_y;
+	int hit;
+	int side;
+	int map_x;
+	int map_y;
 
 	map_x = map_pos[0];
 	map_y = map_pos[1];

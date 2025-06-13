@@ -1,13 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 14:11:50 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 16:11:48 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/cub3D.h"
 
-#include <fcntl.h>   // pour open()
-#include <stdio.h>   // pour printf()
-#include <unistd.h>  // pour close()
-
-////////////////
-char *normalize_spaces(char *str)
+static void	copy_normalized_spaces(const char *src, char *dst)
 {
-	char	*dst;
 	int		i;
 	int		j;
 	bool	in_space;
@@ -15,12 +21,9 @@ char *normalize_spaces(char *str)
 	i = 0;
 	j = 0;
 	in_space = false;
-	dst = malloc(ft_strlen(str) + 1);
-	if (!dst)
-		return (NULL);
-	while (str[i])
+	while (src[i])
 	{
-		if (str[i] == ' ' || str[i] == '\t')
+		if (src[i] == ' ' || src[i] == '\t')
 		{
 			if (!in_space)
 				dst[j++] = ' ';
@@ -28,19 +31,32 @@ char *normalize_spaces(char *str)
 		}
 		else
 		{
-			dst[j++] = str[i];
+			dst[j++] = src[i];
 			in_space = false;
 		}
 		i++;
 	}
 	dst[j] = '\0';
+}
+
+char	*normalize_spaces(char *str)
+{
+	char	*dst;
+	int		len;
+
+	len = ft_strlen(str);
+	dst = malloc(len + 1);
+	if (!dst)
+		return (NULL);
+	copy_normalized_spaces(str, dst);
 	return (ft_strtrim_free(dst, " "));
 }
 
 bool	is_empty_line(const char *line)
 {
-	const char	*p = line;
+	const char	*p;
 
+	p = line;
 	if (!p)
 		return (true);
 	while (*p)
@@ -54,31 +70,13 @@ bool	is_empty_line(const char *line)
 
 static char	*remove_trailing_newline(char *line)
 {
-	size_t	len = ft_strlen(line);
+	size_t	len;
+
+	len = ft_strlen(line);
 	if (len > 0 && line[len - 1] == '\n')
 		line[len - 1] = '\0';
 	return (line);
 }
-
-int	get_map_width(char **map)
-{
-	int	i;
-	int	len;
-	int	max;
-
-	i = 0;
-	max = 0;
-	while (map[i])
-	{
-		len = ft_strlen(map[i]);
-		if (len > max)
-			max = len;
-		i++;
-	}
-	return (max);
-}
-
-///////////////////
 
 static bool	parse_line(t_config *cfg, char *line)
 {
@@ -96,114 +94,154 @@ static bool	parse_line(t_config *cfg, char *line)
 		free_map(tokens);
 		return (false);
 	}
-	if (!ft_strcmp(tokens[0], "NO") || !ft_strcmp(tokens[0], "SO") ||
-		!ft_strcmp(tokens[0], "WE") || !ft_strcmp(tokens[0], "EA"))
+	if (!ft_strcmp(tokens[0], "NO") || !ft_strcmp(tokens[0], "SO")
+		|| !ft_strcmp(tokens[0], "WE") || !ft_strcmp(tokens[0], "EA"))
 		success = set_texture(cfg, tokens[0], tokens[1]);
 	else if (!ft_strcmp(tokens[0], "F"))
 		success = parse_color(tokens[1], &cfg->floor_color);
 	else if (!ft_strcmp(tokens[0], "C"))
 		success = parse_color(tokens[1], &cfg->ceiling_color);
-
 	free_map(tokens);
 	return (success);
 }
 
-static bool	parse_map(t_config *cfg, int fd, char *line)
+static bool	add_line_to_map(t_config *cfg, char *line, int *sz, int *cap)
 {
-	int		map_capacity;
-	int		map_size;
+	char	**tmp;
 
-	map_capacity = 16;
-	map_size = 0;
-	cfg->map = ft_calloc(map_capacity + 1, sizeof(char *));
+	if (*sz >= *cap)
+	{
+		*cap *= 2;
+		tmp = ft_realloc_tab(cfg->map, *cap);
+		if (!tmp)
+		{
+			free(line);
+			free_map(cfg->map);
+			return (false);
+		}
+		cfg->map = tmp;
+	}
+	line = remove_trailing_newline(line);
+	cfg->map[(*sz)++] = line;
+	return (true);
+}
+
+static bool	read_map_lines(t_config *cfg, int fd, char *line)
+{
+	int		cap;
+	int		size;
+
+	cap = 16;
+	size = 0;
+	cfg->map = ft_calloc(cap + 1, sizeof(char *));
 	if (!cfg->map)
 	{
 		free(line);
 		return (false);
 	}
-	line = remove_trailing_newline(line);
-	cfg->map[map_size++] = line;
-	while ((line = get_next_line(fd)))
+	if (!add_line_to_map(cfg, line, &size, &cap))
+		return (false);
+	line = get_next_line(fd);
+	while (line)
 	{
-		printf("Read line: %s", line);
-		if (map_size >= map_capacity)
-		{
-			map_capacity *= 2;
-			char **new_map = ft_realloc_tab(cfg->map, map_capacity);
-			if (!new_map)
-			{
-				free(line);
-				free_map(cfg->map);
-				return (false);
-			}
-			cfg->map = new_map;
-		}
-		line = remove_trailing_newline(line);
-		cfg->map[map_size++] = line;
+		if (!add_line_to_map(cfg, line, &size, &cap))
+			return (false);
+		line = get_next_line(fd);
 	}
-	cfg->map[map_size] = NULL;
-	if (line)
-		free(line);
-	// To do padding
-	cfg->map_height = map_size;
+	cfg->map[size] = NULL;
+	return (true);
+}
+
+static bool	parse_map(t_config *cfg, int fd, char *line)
+{
+	if (!read_map_lines(cfg, fd, line))
+		return (false);
+	/* TODO: add padding if required                           */
+	cfg->map_height = get_map_height(cfg->map);
 	cfg->map_width = get_map_width(cfg->map);
 	return (true);
 }
 
-bool	parse_cub_file(t_config *cfg, char *path)
+static bool	handle_trailing_lines(int fd, char **err)
 {
-	int		fd;
 	char	*line;
 
-	printf("Trying to open file: %s\n", path);
+	line = get_next_line(fd);
+	while (line)
+	{
+		if (!is_empty_line(line))
+		{
+			*err = ft_strjoin("Unexpected content after map: ", line);
+			free(line);
+			return (false);
+		}
+		free(line);
+		line = get_next_line(fd);
+	}
+	return (true);
+}
+
+static bool	start_map_parsing(t_config *cfg, int fd, char *line, char **err)
+{
+	if (!parse_map(cfg, fd, line))
+	{
+		*err = ft_strdup("Failed to parse map.");
+		return (false);
+	}
+	if (!handle_trailing_lines(fd, err))
+		return (false);
+	return (true);
+}
+
+static bool	handle_line(t_config *cfg, int fd, char *line, char **err)
+{
+	if (is_empty_line(line))
+	{
+		free(line);
+		return (true);
+	}
+	if (is_map_line(line))
+		return (start_map_parsing(cfg, fd, line, err));
+	if (!parse_line(cfg, line))
+	{
+		*err = ft_strjoin("Failed to parse config line: ", line);
+		free(line);
+		return (false);
+	}
+	free(line);
+	return (true);
+}
+
+static bool	parse_file_lines(t_config *cfg, int fd, char **err)
+{
+	char	*line;
+
+	line = get_next_line(fd);
+	while (line)
+	{
+		if (!handle_line(cfg, fd, line, err))
+			return (false);
+		line = get_next_line(fd);
+	}
+	return (true);
+}
+
+bool	parse_cub_file(t_config *cfg, char *path, char **err)
+{
+	int	fd;
+
 	cfg->map = NULL;
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 	{
-		printf("Failed to open file: %s\n", path);
-		perror("open");
+		*err = ft_strdup("Failed to open map file.");
 		return (false);
 	}
-	while ((line = get_next_line(fd)))
+	if (!parse_file_lines(cfg, fd, err))
 	{
-		printf("Read line: %s", line);
-		if (is_empty_line(line))
-		{
-			free(line);
-			continue;
-		}
-		if (is_map_line(line)) // first line of the map detected (first line with 1 after trailing space)
-		{
-			if (!parse_map(cfg, fd, line)) // parse the entire map from this point
-			{
-				printf("Failed to parse map.\n");
-				close(fd);
-				return (false);
-			}
-			// After the map: only allow empty lines, anything else is an error
-			while ((line = get_next_line(fd)))
-			{
-				if (!is_empty_line(line))
-				{
-					printf("Unexpected content after map: \"%s\"\n", line);
-					free(line);
-					close(fd);
-					return (false);
-				}
-				free(line);
-			}
-			break ; // parsing complete
-		}
-		if (!parse_line(cfg, line)) // handle config lines
-		{
-			printf("Failed to parse config line: %s\n", line);
-			free(line);
-			close(fd);
-			return (false);
-		}
-		free(line);
+		close(fd);
+		return (false);
 	}
 	close(fd);
-	printf("File parsed successfully.\n");
 	return (true);
 }

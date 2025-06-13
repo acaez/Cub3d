@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3D.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 15:55:23 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -6,6 +18,8 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <math.h>
+# include <fcntl.h>
+# include <unistd.h>
 
 # if defined(__linux__) || defined(__LINUX__)
 #  include "../mlx/minilibx_linux/mlx.h"
@@ -18,8 +32,8 @@
 # define WIDTH 1280
 # define HEIGHT 720
 # define BLOCK 64
-# define DEBUG 1
 # define COLLISION 1.0
+# define MINIMAP_SCALE 0.1
 
 # ifdef LINUX
 #  define W   119
@@ -42,6 +56,22 @@
 # endif
 
 # define PI   3.14159265359
+
+#define ERR_TEXTURE_PATHS \
+	"Config Validation : Missing one or more texture paths (NO, SO, WE, EA)."
+#define ERR_COLOR_MISSING \
+	"Config Validation : Missing floor or ceiling color."
+#define ERR_COLOR_IDENTICAL \
+	"Config Validation : Floor and ceiling colors must not be identical."
+#define ERR_MAP_INVALID_DIM \
+	"Config Validation : Map is missing or too small (minimum size is 3x3)."
+#define ERR_MAP_INVALID_CHARS \
+	"Map Validation : Map contains invalid characters."
+#define ERR_PLAYER_COUNT \
+	"Map Validation : Map must contain exactly one player starting position."
+#define ERR_MAP_NOT_CLOSED \
+	"Map Validation : Map is not properly closed by walls."
+
 
 typedef struct s_player
 {
@@ -95,30 +125,26 @@ void	free_config(t_config *cfg);
 void	exit_error(t_game *game, char *msg);
 int		close_window(t_game *game);
 // ------------------------------ game.c ------------------------------ //
-int	game_loop(t_game *game);
+int		game_loop(t_game *game);
 // ------------------------------ init.c ------------------------------ //
-void	init_key(t_game *game);
-void	init_mlx(t_game *game);
-void	init_player(t_player *player, t_game *game);
-void	init_config(t_config *cfg);
 void	init_game(t_game *game, int argc, char **argv);
 // ------------------------------ scene.c --------------------------- //
 void	draw_scene(t_game *game);
 
 // ============================== PARSING ============================= //
 // ------------------------------ get_map.c --------------------------- //
-size_t  get_max_line_len(char **map);
 bool    pad_map_in_place(char **map, size_t max_len, char pad);
 int     get_map_height(char **map);
+int		get_map_width(char **map);
 // ------------------------------ map.c ------------------------------- //
 char	**get_map(void);
 void	draw_map(t_game *game);
 void	draw_minimap(t_game *game);
 // ------------------------------ parse.c ----------------------------- //
-bool	parse_cub_file(t_config *cfg, char *path);
+bool	parse_cub_file(t_config *cfg, char *path, char **err);
 // ------------------------------ valid.c ----------------------------- //
-bool    validate_map(char **map);
-bool	validate_config(t_config *cfg);
+bool    validate_map(char **map, char **err);
+bool	validate_config(t_config *cfg, char **err);
 
 // ============================== PLAYER ============================== //
 // ------------------------------ draw.c ------------------------------ //
@@ -158,6 +184,13 @@ bool	touch_wall(t_game *game, float px, float py);
 bool 	is_inside_map(char **map, int y, int x);
 bool 	is_open_char(char c);
 bool    line_has_only_valid(char *s);
-
+// ------------------------------ init_utils.c ---------------------- //
+void	init_config(t_config *cfg);
+void	init_key(t_game *game);
+void	init_mlx(t_game *game);
+void	init_player(t_player *player, t_game *game);
+// ------------------------------ debug_utils.c ---------------------- //
+void	print_config(const t_config *cfg);
+void	print_map(char **map);
 
 #endif

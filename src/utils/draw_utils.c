@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 15:59:20 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/13 15:59:23 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/cub3D.h"
 
 void	setup_dir(t_game *game, char direction)
@@ -14,7 +26,7 @@ void	setup_dir(t_game *game, char direction)
 
 void	setup_pos(t_game *game)
 {
-	int	x; 
+	int	x;
 	int	y;
 
 	y = 0;
@@ -29,11 +41,10 @@ void	setup_pos(t_game *game)
 				game->player.y = y * BLOCK + BLOCK / 2;
 				setup_dir(game, game->config.map[y][x]);
 				game->config.map[y][x] = '0';
-				return;
+				return ;
 			}
 			x++;
 		}
 		y++;
 	}
 }
-
