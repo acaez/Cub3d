@@ -37,6 +37,7 @@ void	draw_scene(t_game *game)
 {
 	draw_ceiling_floor(game);
 	raycast(game);
+	printf("map[0] = %s\n", game->map[0]);
 	draw_minimap(game);
 	if (game->debug_mode)
 	{

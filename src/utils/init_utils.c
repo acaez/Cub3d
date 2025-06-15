@@ -60,8 +60,8 @@ void	init_player(t_player *player, t_game *game)
 	player->x = -1;
 	player->y = -1;
 	player->angle = 0;
-	player->speed = 3.0;
-	player->rot_speed = 0.05;
+	player->speed = PLAYSPEED;
+	player->rot_speed = ROTSPEED;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_left = false;

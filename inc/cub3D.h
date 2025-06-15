@@ -31,9 +31,11 @@
 
 # define WIDTH 1280
 # define HEIGHT 720
-# define BLOCK 64
-# define COLLISION 1.0
+# define BLOCK 2
+# define COLLISION 0.1
 # define MINIMAP_SCALE 0.1
+# define PLAYSPEED 0.05
+# define ROTSPEED 0.04
 
 # ifdef LINUX
 #  define W   119
@@ -50,8 +52,8 @@
 #  define S   1
 #  define D   2
 #  define ESC  53
-#  define LEFT  123
-#  define RIGHT 124
+#  define LEFT  124 // inversed
+#  define RIGHT 123 // inversed
 #  define TAB  48
 # endif
 

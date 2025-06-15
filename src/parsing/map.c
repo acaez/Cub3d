@@ -37,32 +37,48 @@ void	draw_map(t_game *game)
 	}
 }
 
+#define MINIMAP_MAX_CELLS 100
+
 void	draw_minimap(t_game *game)
 {
-	char	**map;
-	int		x;
-	int		y;
-	int		px;
-	int		py;
+	int	map_w = game->config.map_width;
+	int	map_h = game->config.map_height;
+	int	px_max = WIDTH * 2 / 10;
+	int	py_max = HEIGHT * 2 / 10;
+	int	cell_size_x = px_max / map_w;
+	int	cell_size_y = py_max / map_h;
+	int	cell_size = (cell_size_x < cell_size_y) ? cell_size_x : cell_size_y;
 
-	map = game->map;
-	y = 0;
-	while (map && map[y])
+	if (cell_size < 1)
+		cell_size = 1;
+
+	int	visible_w = px_max / cell_size;
+	int	visible_h = py_max / cell_size;
+
+	int	y = 0;
+	while (y < visible_h)
 	{
-		x = 0;
-		while (map[y][x])
+		int	x = 0;
+		while (x < visible_w)
 		{
-			if (map[y][x] == '1')
+			int	map_x = x;
+			int	map_y = y;
+			if (map_y < map_h && map_x < (int)ft_strlen(game->map[map_y])
+				&& game->map[map_y][map_x] == '1')
 			{
-				draw_filled_square(game, x * BLOCK * MINIMAP_SCALE,
-					y * BLOCK * MINIMAP_SCALE,
-					BLOCK * MINIMAP_SCALE, 0xFFFFFF);
+				draw_filled_square(game, x * cell_size, y * cell_size,
+					cell_size, 0xFFFFFF);
 			}
 			x++;
 		}
 		y++;
 	}
-	px = game->player.x * MINIMAP_SCALE;
-	py = game->player.y * MINIMAP_SCALE;
-	draw_filled_square(game, px - 2, py - 2, 4, 0xFF0000);
+
+	// Position du joueur (pas centré, juste placé à l'endroit correspondant)
+	float	player_map_x = game->player.x / BLOCK;
+	float	player_map_y = game->player.y / BLOCK;
+	int	player_px = player_map_x * cell_size;
+	int	player_py = player_map_y * cell_size;
+
+	draw_filled_square(game, player_px - 2, player_py - 2, 4, 0xFF0000);
 }
