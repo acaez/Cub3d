@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 12:00:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:49:11 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void	calculate_wall_height(float perp_wall_dist, int *draw_points)
 	int	draw_start;
 	int	draw_end;
 
-	line_height = (int)(HEIGHT / perp_wall_dist);
+	line_height = (int)((WALL_HEIGHT * PROJ_PLANE_DIST) / perp_wall_dist);
 	draw_start = -line_height / 2 + HEIGHT / 2;
 	if (draw_start < 0)
 		draw_start = 0;
@@ -117,9 +117,9 @@ static void	calculate_ray_direction(t_game *game, int x, float *ray_dir)
 {
 	float	camera_x;
 
-	camera_x = 2 * x / (float)WIDTH - 1;
-	ray_dir[0] = cos(game->player.angle) + sin(game->player.angle) * camera_x;
-	ray_dir[1] = sin(game->player.angle) - cos(game->player.angle) * camera_x;
+	camera_x = 2.0f * x / WIDTH - 1.0f;
+	ray_dir[0] = cos(game->player.angle) + camera_x * -sin(game->player.angle);
+	ray_dir[1] = sin(game->player.angle) + camera_x * cos(game->player.angle);
 }
 
 static float	calculate_perp_distance(t_game *game, float *ray_dir)
@@ -142,7 +142,7 @@ static float	calculate_perp_distance(t_game *game, float *ray_dir)
 		perp_wall_dist = (hit_y - game->player.y / BLOCK
 				+ (1 - (int)game->ray.side_dist[3]) / 2) / ray_dir[1];
 	}
-	return (perp_wall_dist * BLOCK);
+	return (perp_wall_dist);
 }
 
 void	raycast(t_game *game)

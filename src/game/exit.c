@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:50:08 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 15:40:57 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:40:58 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void	free_map(char **map)
 {
 	int	i;
 
+	if (!map)
+		return ;
 	i = 0;
 	while (map[i])
 	{
@@ -36,7 +38,10 @@ void	free_config(t_config *cfg)
 	if (cfg->ea_path)
 		free(cfg->ea_path);
 	if (cfg->map)
-		free(cfg->map);
+	{
+		free_map(cfg->map);
+		cfg->map = NULL;
+	}
 }
 
 static void	exit_game(t_game *game, int exit_code)
@@ -51,8 +56,7 @@ static void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_display(game->mlx);
 		if (game->mlx)
 			free(game->mlx);
-		if (game->map)
-			free_map(game->map);
+		free_config(&game->config); // forgot to call it
 	}
 	exit(exit_code);
 }

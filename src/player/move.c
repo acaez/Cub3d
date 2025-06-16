@@ -58,9 +58,9 @@ static void	move_strafe(t_player *player)
 	sx = cos(player->angle + PI / 2);
 	sy = sin(player->angle + PI / 2);
 	if (player->key_right)
-		dir = -1.0;
-	else
 		dir = 1.0;
+	else
+		dir = -1.0;
 	new_x = player->x + sx * player->speed * dir;
 	new_y = player->y + sy * player->speed * dir;
 	if (!check_collision(player, new_x, player->y))

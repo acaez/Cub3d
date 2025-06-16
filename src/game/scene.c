@@ -6,8 +6,10 @@ static void	draw_floor(t_game *game)
 	int	y;
 	int	color;
 
-	color = (game->config.floor_color) ? game->config.floor_color : 0x654321;
-
+	if (game->config.floor_color != -1)
+		color = game->config.floor_color;
+	else
+		color = 0x646464;
 	y = HEIGHT / 2;
 	while (y < HEIGHT)
 	{
@@ -27,8 +29,10 @@ static void	draw_sky(t_game *game)
 	int	y;
 	int	color;
 
-	color = (game->config.sky_color) ? game->config.sky_color : 0x87CEEB;
-
+	if (game->config.sky_color != -1)
+		color = game->config.sky_color;
+	else
+		color = 0x87CEEB;
 	y = 0;
 	while (y < HEIGHT / 2)
 	{
@@ -49,3 +53,4 @@ void	draw_scene(t_game *game)
 	raycast(game);
 	draw_minimap(game);
 }
+

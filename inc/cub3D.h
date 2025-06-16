@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 12:37:08 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 17:53:41 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,21 @@
 #  define MACOS 1
 # endif
 
-# define WIDTH 1280
-# define HEIGHT 720
-# define BLOCK 2
-# define COLLISION 0.1
-# define MINIMAP_SCALE 0.1
-# define PLAYSPEED 0.05
-# define ROTSPEED 0.04
-# define PI 3.14159265359
+# define WIDTH     1280
+# define HEIGHT    720
+
+# define BLOCK     64
+
+# define COLLISION (0.05 * BLOCK)
+# define PLAYSPEED (0.04 * BLOCK)
+# define ROTSPEED  0.04
+
+# define PI        3.14159265359
+
+// New constants
+# define FOV       (PI / 3)
+# define PROJ_PLANE_DIST (WIDTH / (2 * tan(FOV / 2)))
+# define WALL_HEIGHT 0.5f
 
 # ifdef LINUX
 #  define W 119
@@ -56,8 +63,8 @@
 #  define S 1
 #  define D 2
 #  define ESC 53
-#  define LEFT 124
-#  define RIGHT 123
+#  define LEFT 123
+#  define RIGHT 124
 #  define TAB 48
 #  define KEY_PRESS_MASK    0
 #  define KEY_RELEASE_MASK  0
@@ -157,7 +164,7 @@ int		get_map_width(char **map);
 
 /* ------------------------------ map.c ----------------------------------- */
 char	**get_map(void);
-void	draw_map(t_game *game);
+void	draw_filled_square(t_game *game, int x, int y, int size, int color);
 void	draw_minimap(t_game *game);
 
 /* ------------------------------ parse.c --------------------------------- */
@@ -171,7 +178,6 @@ bool	validate_config(t_config *cfg, char **err);
 /* ------------------------------ draw.c ---------------------------------- */
 void	clear_image(t_game *game);
 void	put_pixel(t_game *game, int x, int y, int color);
-void	draw_square(t_game *game, int x, int y, int size);
 
 /* ------------------------------ keys.c ---------------------------------- */
 int		key_press(int keycode, t_game *game);

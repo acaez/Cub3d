@@ -80,9 +80,9 @@ $(LIBFT):
 $(CMLX):
 	@echo "$(YELLOW)Compiling minilibx for $(PLATFORM)...$(NC)"
 ifeq ($(UNAME_S), Darwin)
-	 @$(MAKE) -C $(GMLX) 2>/dev/null 1>/dev/null || (echo "$(RED)Error: minilibx_opengl compilation failed$(NC)" && exit 1)
+	 @$(MAKE) -C $(GMLX) || (echo "$(RED)Error: minilibx_opengl compilation failed$(NC)" && exit 1)
 else
-	 @$(MAKE) -C $(GMLX) 2>/dev/null 1>dev/null || (echo "$(RED)Error: minilibx_linux compilation failed$(NC)" && exit 1)
+	 @$(MAKE) -C $(GMLX) || (echo "$(RED)Error: minilibx_linux compilation failed$(NC)" && exit 1)
 endif
 
 clean:
