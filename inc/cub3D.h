@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 17:53:41 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 18:03:14 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,16 @@ typedef struct s_game
 	bool		debug_mode;
 	t_ray		ray;
 }	t_game;
+
+typedef struct s_minimap
+{
+	int	map_w;
+	int	map_h;
+	int	cell_size;
+	int	origin_x;
+	int	origin_y;
+	float	scale;
+}	t_minimap;
 
 /* ============================== GAME  =================================== */
 /* ------------------------------ exit.c ---------------------------------- */
