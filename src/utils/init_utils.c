@@ -27,15 +27,9 @@ void	init_config(t_config *cfg)
 
 void	init_key(t_game *game)
 {
-#ifdef LINUX
-	mlx_hook(game->win, 2, 1L << 0, key_press, game);
-	mlx_hook(game->win, 3, 1L << 1, key_release, game);
-	mlx_hook(game->win, 17, 0, close_window, game);
-#elif MACOS
-	mlx_hook(game->win, 2, 0, key_press, game);
-	mlx_hook(game->win, 3, 0, key_release, game);
-	mlx_hook(game->win, 17, 0, close_window, game);
-#endif
+	mlx_hook(game->win, 2, KEY_PRESS_MASK, key_press, game);
+	mlx_hook(game->win, 3, KEY_RELEASE_MASK, key_release, game);
+	mlx_hook(game->win, 17, DESTROY_MASK, close_window, game);
 }
 
 void	init_mlx(t_game *game)

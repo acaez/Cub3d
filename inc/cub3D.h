@@ -36,60 +36,42 @@
 # define MINIMAP_SCALE 0.1
 # define PLAYSPEED 0.05
 # define ROTSPEED 0.04
+# define PI 3.14159265359
 
 # ifdef LINUX
-#  define W   119
-#  define A   97
-#  define S   115
-#  define D   100
-#  define ESC  65307
-#  define LEFT  65361
+#  define W 119
+#  define A 97
+#  define S 115
+#  define D 100
+#  define ESC 65307
+#  define LEFT 65361
 #  define RIGHT 65363
-#  define TAB  65289
+#  define TAB 65289
 # elif MACOS
-#  define W   13
-#  define A   0
-#  define S   1
-#  define D   2
-#  define ESC  53
-#  define LEFT  124 // inversed
-#  define RIGHT 123 // inversed
-#  define TAB  48
+#  define W 13
+#  define A 0
+#  define S 1
+#  define D 2
+#  define ESC 53
+#  define LEFT 124
+#  define RIGHT 123
+#  define TAB 48
 # endif
 
-# define PI   3.14159265359
-
-#define ERR_TEXTURE_PATHS \
-	"Config Validation : Missing one or more texture paths (NO, SO, WE, EA)."
-#define ERR_COLOR_MISSING \
+# define ERR_TEXTURE_PATHS \
+	"Config Validation : Missing texture paths (NO, SO, WE, EA)."
+# define ERR_COLOR_MISSING \
 	"Config Validation : Missing floor or ceiling color."
-#define ERR_COLOR_IDENTICAL \
-	"Config Validation : Floor and ceiling colors must not be identical."
-#define ERR_MAP_INVALID_DIM \
-	"Config Validation : Map is missing or too small (minimum size is 3x3)."
-#define ERR_MAP_INVALID_CHARS \
+# define ERR_COLOR_IDENTICAL \
+	"Config Validation : Floor and ceiling colors must differ."
+# define ERR_MAP_INVALID_DIM \
+	"Config Validation : Map missing or too small (minimum 3x3)."
+# define ERR_MAP_INVALID_CHARS \
 	"Map Validation : Map contains invalid characters."
-#define ERR_PLAYER_COUNT \
-	"Map Validation : Map must contain exactly one player starting position."
-#define ERR_MAP_NOT_CLOSED \
+# define ERR_PLAYER_COUNT \
+	"Map Validation : Map must contain exactly one player position."
+# define ERR_MAP_NOT_CLOSED \
 	"Map Validation : Map is not properly closed by walls."
-
-
-typedef struct s_player
-{
-	float	x;
-	float	y;
-	float	angle;
-	float	speed;
-	float	rot_speed;
-	bool	key_up;
-	bool	key_down;
-	bool	key_left;
-	bool	key_right;
-	bool	rot_left;
-	bool	rot_right;
-	struct s_game *game;
-}	t_player;
 
 typedef struct s_config
 {
@@ -98,11 +80,35 @@ typedef struct s_config
 	char	*we_path;
 	char	*ea_path;
 	int		floor_color;
-	int		ceiling_color;
+	int		sky_color;
 	char	**map;
 	int		map_width;
 	int		map_height;
 }	t_config;
+
+typedef struct s_player
+{
+	float			x;
+	float			y;
+	float			angle;
+	float			speed;
+	float			rot_speed;
+	bool			key_up;
+	bool			key_down;
+	bool			key_left;
+	bool			key_right;
+	bool			rot_left;
+	bool			rot_right;
+	struct s_game	*game;
+}	t_player;
+
+typedef struct s_ray
+{
+	float	side_dist[4];
+	float	delta_dist[2];
+	int		map_pos[2];
+	int		hit_info[4];
+}	t_ray;
 
 typedef struct s_game
 {
@@ -116,82 +122,95 @@ typedef struct s_game
 	char		**map;
 	t_player	player;
 	t_config	config;
-	bool        debug_mode;
+	bool		debug_mode;
+	t_ray		ray;
 }	t_game;
 
-
-// ============================== GAME ================================ //
-// ------------------------------ exit.c ------------------------------ //
+/* ============================== GAME  =================================== */
+/* ------------------------------ exit.c ---------------------------------- */
 void	free_map(char **map);
 void	free_config(t_config *cfg);
 void	exit_error(t_game *game, char *msg);
 int		close_window(t_game *game);
-// ------------------------------ game.c ------------------------------ //
+
+/* ------------------------------ game.c ---------------------------------- */
 int		game_loop(t_game *game);
-// ------------------------------ init.c ------------------------------ //
+
+/* ------------------------------ init.c ---------------------------------- */
 void	init_game(t_game *game, int argc, char **argv);
-// ------------------------------ scene.c --------------------------- //
+
+/* ------------------------------ scene.c --------------------------------- */
 void	draw_scene(t_game *game);
 
-// ============================== PARSING ============================= //
-// ------------------------------ get_map.c --------------------------- //
-bool    pad_map_in_place(char **map, size_t max_len, char pad);
-int     get_map_height(char **map);
+/* ============================== PARSING ================================= */
+/* ------------------------------ get_map.c ------------------------------- */
+bool	pad_map_in_place(char **map, size_t max_len, char pad);
+int		get_map_height(char **map);
 int		get_map_width(char **map);
-// ------------------------------ map.c ------------------------------- //
+
+/* ------------------------------ map.c ----------------------------------- */
 char	**get_map(void);
 void	draw_map(t_game *game);
 void	draw_minimap(t_game *game);
-// ------------------------------ parse.c ----------------------------- //
+
+/* ------------------------------ parse.c --------------------------------- */
 bool	parse_cub_file(t_config *cfg, char *path, char **err);
-// ------------------------------ valid.c ----------------------------- //
-bool    validate_map(char **map, char **err);
+
+/* ------------------------------ valid.c --------------------------------- */
+bool	validate_map(char **map, char **err);
 bool	validate_config(t_config *cfg, char **err);
 
-// ============================== PLAYER ============================== //
-// ------------------------------ draw.c ------------------------------ //
+/* ============================== PLAYER ================================== */
+/* ------------------------------ draw.c ---------------------------------- */
 void	clear_image(t_game *game);
 void	put_pixel(t_game *game, int x, int y, int color);
-void	draw_square(t_game *game, int x, int y, int size, int color);
-void	draw_filled_square(t_game *game, int x, int y, int size, int color);
-void	draw_player_direction(t_game *game);
-// ------------------------------ keys.c ------------------------------ //
+void	draw_square(t_game *game, int x, int y, int size);
+
+/* ------------------------------ keys.c ---------------------------------- */
 int		key_press(int keycode, t_game *game);
 int		key_release(int keycode, t_game *game);
-// ------------------------------ move.c ------------------------------ //
+
+/* ------------------------------ move.c ---------------------------------- */
 void	move_player(t_player *player);
 
-// ============================== RAYCAST ============================= //
-// ------------------------------ dda.c ------------------------------- //
+/* ============================== RAYCAST ================================= */
+/* ------------------------------ dda.c ----------------------------------- */
 void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y,
-				int map_x, int map_y, float *side_dist, float *delta_dist);
+			int map_x, int map_y, float *side_dist, float *delta_dist);
 void	perform_dda(t_game *game, float *side_dist, float *delta_dist,
-						int *map_pos, int *hit_info);
-// ------------------------------ raycast.c --------------------------- //
+			int *map_pos, int *hit_info);
+
+/* ------------------------------ raycast.c ------------------------------- */
 void	raycast(t_game *game);
-// ============================== UTILS =============================== //
-// ------------------------------ draw_utils.c ------------------------ //
+
+/* ============================== UTILITY ================================= */
+/* ------------------------------ draw_utils.c ---------------------------- */
 void	setup_dir(t_game *game, char direction);
 void	setup_pos(t_game *game);
-// ------------------------------ pars_utils.c ------------------------ //
+
+/* ------------------------------ pars_utils.c ---------------------------- */
 char	*ft_strtrim_free(char *str, const char *set);
 char	**ft_realloc_tab(char **old, int new_size);
-bool    is_map_line(char *line);
+bool	is_map_line(char *line);
 bool	parse_color(char *line, int *color);
 bool	set_texture(t_config *cfg, const char *id, const char *path);
-// ------------------------------ utils.c ----------------------------- //
+
+/* ------------------------------ utils.c --------------------------------- */
 float	distance(float dx, float dy);
 bool	touch_wall(t_game *game, float px, float py);
-// ------------------------------ valide_utils.c ---------------------- //
-bool 	is_inside_map(char **map, int y, int x);
-bool 	is_open_char(char c);
-bool    line_has_only_valid(char *s);
-// ------------------------------ init_utils.c ---------------------- //
+
+/* ------------------------------ valide_utils.c -------------------------- */
+bool	is_inside_map(char **map, int y, int x);
+bool	is_open_char(char c);
+bool	line_has_only_valid(char *s);
+
+/* ------------------------------ init_utils.c ---------------------------- */
 void	init_config(t_config *cfg);
 void	init_key(t_game *game);
 void	init_mlx(t_game *game);
 void	init_player(t_player *player, t_game *game);
-// ------------------------------ debug_utils.c ---------------------- //
+
+/* ------------------------------ debug_utils.c --------------------------- */
 void	print_config(const t_config *cfg);
 void	print_map(char **map);
 

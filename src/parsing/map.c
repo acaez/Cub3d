@@ -12,17 +12,16 @@
 
 #include "../../inc/cub3D.h"
 
-void	draw_map(t_game *game)
+void	draw_map(t_game *game, t_player *player)
 {
 	char	**map;
-	int		color;
 	int		x;
 	int		y;
 
 	map = game->map;
 	if (!map)
 		return ;
-	color = 0xFFFFFF;
+	player->color = 0xFFFFFF;
 	y = 0;
 	while (map[y])
 	{
@@ -30,14 +29,14 @@ void	draw_map(t_game *game)
 		while (map[y][x])
 		{
 			if (map[y][x] == '1')
-				draw_square(game, x * BLOCK, y * BLOCK, BLOCK, color);
+				draw_square(game, x * BLOCK, y * BLOCK, BLOCK, player->color);
 			x++;
 		}
 		y++;
 	}
 }
 
-#define MINIMAP_MAX_CELLS 100
+#define MINIMAP_MAX_CELLS 100 // !! global
 
 void	draw_minimap(t_game *game)
 {

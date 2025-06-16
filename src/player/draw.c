@@ -25,69 +25,22 @@ void	put_pixel(t_game *game, int x, int y, int color)
 	}
 }
 
-void	draw_square(t_game *game, int x, int y, int size, int color)
+static void horizontal_line(t_game *game, int x, int y, int size)
 {
-	int	i;
-	int	j;
 
-	i = 0;
-	while (i < size)
-	{
-		put_pixel(game, x + i, y, color);
-		i++;
-	}
-	i = 0;
-	while (i < size)
-	{
-		put_pixel(game, x + i, y + size - 1, color);
-		i++;
-	}
-	j = 0;
-	while (j < size)
-	{
-		put_pixel(game, x, y + j, color);
-		j++;
-	}
-	j = 0;
-	while (j < size)
-	{
-		put_pixel(game, x + size - 1, y + j, color);
-		j++;
-	}
 }
 
-void	draw_filled_square(t_game *game, int x, int y, int size, int color)
+static void	vertical_line(t_game *game, int x, int y, int size)
 {
-	int	i;
-	int	j;
 
-	j = 0;
-	while (j < size)
-	{
-		i = 0;
-		while (i < size)
-		{
-			put_pixel(game, x + i, y + j, color);
-			i++;
-		}
-		j++;
-	}
 }
 
-void	draw_player_direction(t_game *game)
+void	draw_square(t_game *game, int x, int y, int size)
 {
-	int		i;
-	float	px;
-	float	py;
-
-	i = 0;
-	draw_filled_square(game, game->player.x - 5, game->player.y - 5, 10,
-			0x00FF00);
-	while (i < 20)
-	{
-		px = game->player.x + cos(game->player.angle) * i;
-		py = game->player.y + sin(game->player.angle) * i;
-		put_pixel(game, px, py, 0xFFFF00);
-		i++;
-	}
+	horizontal_line();
+	horizontal_line();
+	vertical_line();
+	vertical_line();
 }
+
+

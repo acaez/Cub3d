@@ -20,10 +20,7 @@ int	key_press(int keycode, t_game *game)
 	else if (keycode == RIGHT)
 		game->player.rot_right = true;
 	else if (keycode == TAB)
-	{
 		game->debug_mode = !game->debug_mode;
-		printf("Debug mode: %s\n", game->debug_mode ? "ON" : "OFF");
-	}
 	return (0);
 }
 
