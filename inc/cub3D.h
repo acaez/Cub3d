@@ -31,20 +31,8 @@
 
 # define WIDTH     1280
 # define HEIGHT    720
-
 # define BLOCK     64
-
-# define COLLISION (0.05 * BLOCK)
-# define PLAYSPEED (0.04 * BLOCK)
-# define ROTSPEED  0.04
-
 # define PI        3.14159265359
-
-// New constants
-# define FOV       (PI / 3)
-# define PROJ_PLANE_DIST (WIDTH / (2 * tan(FOV / 2)))
-# define WALL_HEIGHT 0.5f
-
 # ifdef LINUX
 #  define W 119
 #  define A 97
@@ -54,9 +42,9 @@
 #  define LEFT 65361
 #  define RIGHT 65363
 #  define TAB 65289
-#  define KEY_PRESS_MASK    (1L << 0)
-#  define KEY_RELEASE_MASK  (1L << 1)
-#  define DESTROY_MASK      (1L << 17)
+#  define KEY_PRESS_MASK    1
+#  define KEY_RELEASE_MASK  2
+#  define DESTROY_MASK      131072
 # elif MACOS
 #  define W 13
 #  define A 0
@@ -70,7 +58,6 @@
 #  define KEY_RELEASE_MASK  0
 #  define DESTROY_MASK      0
 # endif
-
 
 # define ERR_TEXTURE_PATHS \
 	"Config Validation : Missing texture paths (NO, SO, WE, EA)."
@@ -118,6 +105,8 @@ typedef struct s_player
 
 typedef struct s_ray
 {
+	int		side;
+	int		wall_dir;
 	float	side_dist[4];
 	float	delta_dist[2];
 	int		map_pos[2];
@@ -142,11 +131,15 @@ typedef struct s_game
 
 typedef struct s_minimap
 {
-	int	map_w;
-	int	map_h;
-	int	cell_size;
-	int	origin_x;
-	int	origin_y;
+	int		x;
+	int		y;
+	int		size;
+	int		color;
+	int		map_w;
+	int		map_h;
+	int		cell_size;
+	int		origin_x;
+	int		origin_y;
 	float	scale;
 }	t_minimap;
 
@@ -161,6 +154,7 @@ int		close_window(t_game *game);
 int		game_loop(t_game *game);
 
 /* ------------------------------ init.c ---------------------------------- */
+void	init_mlx(t_game *game);
 void	init_game(t_game *game, int argc, char **argv);
 
 /* ------------------------------ scene.c --------------------------------- */
@@ -174,7 +168,7 @@ int		get_map_width(char **map);
 
 /* ------------------------------ map.c ----------------------------------- */
 char	**get_map(void);
-void	draw_filled_square(t_game *game, int x, int y, int size, int color);
+void	draw_filled_square(t_game *game, t_minimap minimap);
 void	draw_minimap(t_game *game);
 
 /* ------------------------------ parse.c --------------------------------- */
@@ -216,9 +210,11 @@ bool	is_map_line(char *line);
 bool	parse_color(char *line, int *color);
 bool	set_texture(t_config *cfg, const char *id, const char *path);
 
-/* ------------------------------ utils.c --------------------------------- */
+/* ------------------------------ raycast_utils.c ------------------------- */
 float	distance(float dx, float dy);
 bool	touch_wall(t_game *game, float px, float py);
+int		get_wall_color(int side, int wall_dir);
+void	calculate_wall_height(float perp_wall_dist, int *draw_points);
 
 /* ------------------------------ valide_utils.c -------------------------- */
 bool	is_inside_map(char **map, int y, int x);
@@ -229,6 +225,8 @@ bool	line_has_only_valid(char *s);
 void	init_config(t_config *cfg);
 void	init_key(t_game *game);
 void	init_mlx(t_game *game);
+void	setup_dir(t_game *game, char direction);
+void	setup_pos(t_game *game);
 void	init_player(t_player *player, t_game *game);
 
 /* ------------------------------ debug_utils.c --------------------------- */

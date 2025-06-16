@@ -12,6 +12,23 @@
 
 #include "../../inc/cub3D.h"
 
+void	init_mlx(t_game *game)
+{
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		exit_error(game, "mlx_init() failed");
+	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
+	if (!game->win)
+		exit_error(game, "mlx_new_window() failed");
+	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+	if (!game->img)
+		exit_error(game, "mlx_new_image() failed");
+	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
+			&game->endian);
+	if (!game->data)
+		exit_error(game, "mlx_get_data_addr() failed");
+}
+
 static void	load_game(t_game *game, char *map_path, int debug_mode)
 {
 	char	*err;

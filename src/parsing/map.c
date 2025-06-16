@@ -12,18 +12,18 @@
 
 #include "../../inc/cub3D.h"
 
-void	draw_filled_square(t_game *game, int x, int y, int size, int color)
+void	draw_filled_square(t_game *game, t_minimap minimap)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < size)
+	while (i < minimap.size)
 	{
 		j = 0;
-		while (j < size)
+		while (j < minimap.size)
 		{
-			put_pixel(game, x + i, y + j, color);
+			put_pixel(game, minimap.x + i, minimap.y + j, minimap.color);
 			j++;
 		}
 		i++;
@@ -43,7 +43,10 @@ static void	init_minimap(t_game *game, t_minimap *m)
 	cell_y = py_max / game->config.map_height;
 	m->map_w = game->config.map_width;
 	m->map_h = game->config.map_height;
-	m->cell_size = (cell_x < cell_y) ? cell_x : cell_y;
+	if (cell_x < cell_y)
+		m->cell_size = cell_x;
+	else
+		m->cell_size = cell_y;
 	if (m->cell_size < 1)
 		m->cell_size = 1;
 	m->origin_x = 10;
@@ -62,11 +65,15 @@ static void	draw_map_tiles(t_game *game, t_minimap *m)
 		x = 0;
 		while (x < (int)ft_strlen(game->map[y]))
 		{
-			int	color = (game->map[y][x] == '1') ? 0xAAAAAA : 0x222222;
-			draw_filled_square(game,
-				m->origin_x + x * m->cell_size,
-				m->origin_y + y * m->cell_size,
-				m->cell_size, color);
+			if (game->map[y][x] == '1')
+				m->color = 0xAAAAAA;
+			else
+				m->color = 0x222222;
+			m->x = m->origin_x + x * m->cell_size;
+			m->y = m->origin_y + y * m->cell_size;
+			m->size = m->cell_size;
+			m->color = m->color;
+			draw_filled_square(game, *m);
 			x++;
 		}
 		y++;
@@ -75,12 +82,17 @@ static void	draw_map_tiles(t_game *game, t_minimap *m)
 
 static void	draw_player_dot(t_game *game, t_minimap *m)
 {
-	int	px;
-	int	py;
+	int			px;
+	int			py;
+	t_minimap	square;
 
 	px = m->origin_x + (int)(game->player.x * m->scale);
 	py = m->origin_y + (int)(game->player.y * m->scale);
-	draw_filled_square(game, px - 2, py - 2, 4, 0xFF0000);
+	square.x = px - 2;
+	square.y = py - 2;
+	square.size = 4;
+	square.color = 0xFF0000;
+	draw_filled_square(game, square);
 }
 
 void	draw_minimap(t_game *game)
@@ -91,4 +103,3 @@ void	draw_minimap(t_game *game)
 	draw_map_tiles(game, &m);
 	draw_player_dot(game, &m);
 }
-

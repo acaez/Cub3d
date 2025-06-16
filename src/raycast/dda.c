@@ -64,19 +64,6 @@ void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y)
 	setup_y_direction(game, ray_dir_y);
 }
 
-static int	check_wall_hit(t_game *game, int map_x, int map_y)
-{
-	if (map_x < 0 || map_y < 0)
-		return (1);
-	if (map_y >= game->config.map_height)
-		return (1);
-	if (map_x >= (int)ft_strlen(game->map[map_y]))
-		return (1);
-	if (game->map[map_y][map_x] == '1')
-		return (1);
-	return (0);
-}
-
 static void	step_ray(t_game *game, int *side)
 {
 	if (game->ray.side_dist[0] < game->ray.side_dist[1])
@@ -102,7 +89,7 @@ void	perform_dda(t_game *game)
 	while (!hit)
 	{
 		step_ray(game, &side);
-		hit = check_wall_hit(game, game->ray.map_pos[0], game->ray.map_pos[1]);
+		hit = touch_wall(game, game->ray.map_pos[0], game->ray.map_pos[1]);
 	}
 	game->ray.hit_info[0] = game->ray.map_pos[0];
 	game->ray.hit_info[1] = game->ray.map_pos[1];

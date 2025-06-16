@@ -14,9 +14,9 @@ static void	handle_rotation(t_player *player)
 
 static int	check_collision(t_player *player, float x, float y)
 {
-	if (touch_wall(player->game, x + COLLISION, y))
+	if (touch_wall(player->game, x + 0.05 * BLOCK, y))
 		return (1);
-	if (touch_wall(player->game, x - COLLISION, y))
+	if (touch_wall(player->game, x - 0.05 * BLOCK, y))
 		return (1);
 	return (0);
 }

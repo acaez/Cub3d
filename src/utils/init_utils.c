@@ -32,21 +32,41 @@ void	init_key(t_game *game)
 	mlx_hook(game->win, 17, DESTROY_MASK, close_window, game);
 }
 
-void	init_mlx(t_game *game)
+void	setup_dir(t_game *game, char direction)
 {
-	game->mlx = mlx_init();
-	if (!game->mlx)
-		exit_error(game, "mlx_init() failed");
-	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-	if (!game->win)
-		exit_error(game, "mlx_new_window() failed");
-	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (!game->img)
-		exit_error(game, "mlx_new_image() failed");
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
-			&game->endian);
-	if (!game->data)
-		exit_error(game, "mlx_get_data_addr() failed");
+	if (direction == 'N')
+		game->player.angle = 3 * PI / 2;
+	else if (direction == 'S')
+		game->player.angle = PI / 2;
+	else if (direction == 'E')
+		game->player.angle = 0;
+	else if (direction == 'W')
+		game->player.angle = PI;
+}
+
+void	setup_pos(t_game *game)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	while (game->config.map[y])
+	{
+		x = 0;
+		while (game->config.map[y][x])
+		{
+			if (ft_strchr("NSEW", game->config.map[y][x]))
+			{
+				game->player.x = x * BLOCK + BLOCK / 2;
+				game->player.y = y * BLOCK + BLOCK / 2;
+				setup_dir(game, game->config.map[y][x]);
+				game->config.map[y][x] = '0';
+				return ;
+			}
+			x++;
+		}
+		y++;
+	}
 }
 
 void	init_player(t_player *player, t_game *game)
@@ -54,8 +74,8 @@ void	init_player(t_player *player, t_game *game)
 	player->x = -1;
 	player->y = -1;
 	player->angle = 0;
-	player->speed = PLAYSPEED;
-	player->rot_speed = ROTSPEED;
+	player->speed = 0.04 * BLOCK;
+	player->rot_speed = 0.04;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_left = false;
@@ -63,6 +83,6 @@ void	init_player(t_player *player, t_game *game)
 	player->rot_left = false;
 	player->rot_right = false;
 	player->game = game;
-	setup_pos(game);
 	game->map = game->config.map;
+	setup_pos(game);
 }

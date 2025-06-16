@@ -21,10 +21,9 @@ SRC      = main.c \
 		   raycast/dda.c \
 		   raycast/raycast.c \
 		   utils/debug_utils.c \
-		   utils/draw_utils.c \
 		   utils/init_utils.c \
 		   utils/parse_utils.c \
-		   utils/utils.c \
+		   utils/raycast_utils.c \
 		   utils/valid_utils.c \
 
 OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))

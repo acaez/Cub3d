@@ -56,7 +56,7 @@ static void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_display(game->mlx);
 		if (game->mlx)
 			free(game->mlx);
-		free_config(&game->config); // forgot to call it
+		free_config(&game->config);
 	}
 	exit(exit_code);
 }

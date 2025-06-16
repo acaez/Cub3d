@@ -48,9 +48,11 @@ static void	draw_sky(t_game *game)
 
 void	draw_scene(t_game *game)
 {
+	if (!game)
+		return ;
 	draw_floor(game);
 	draw_sky(game);
 	raycast(game);
-	draw_minimap(game);
+	if (game->map)
+		draw_minimap(game);
 }
-
