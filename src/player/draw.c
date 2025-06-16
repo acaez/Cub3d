@@ -25,22 +25,3 @@ void	put_pixel(t_game *game, int x, int y, int color)
 	}
 }
 
-static void horizontal_line(t_game *game, int x, int y, int size)
-{
-
-}
-
-static void	vertical_line(t_game *game, int x, int y, int size)
-{
-
-}
-
-void	draw_square(t_game *game, int x, int y, int size)
-{
-	horizontal_line();
-	horizontal_line();
-	vertical_line();
-	vertical_line();
-}
-
-

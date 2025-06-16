@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 13:07:32 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 16:11:28 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 12:34:31 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	init_config(t_config *cfg)
 	cfg->we_path = NULL;
 	cfg->ea_path = NULL;
 	cfg->floor_color = -1;
-	cfg->ceiling_color = -1;
+	cfg->sky_color = -1;
 	cfg->map = NULL;
 	cfg->map_width = -1;
 	cfg->map_height = -1;

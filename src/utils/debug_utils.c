@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 12:11:15 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 13:12:21 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 12:25:16 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	print_config(const t_config *cfg)
 	printf("WE: %s\n", cfg->we_path);
 	printf("EA: %s\n", cfg->ea_path);
 	printf("Floor:   %06X\n", cfg->floor_color);
-	printf("Ceiling: %06X\n", cfg->ceiling_color);
+	printf("Ceiling: %06X\n", cfg->sky_color);
 	printf("Map size: %d x %d\n", cfg->map_width, cfg->map_height);
 }
 

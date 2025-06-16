@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 15:55:23 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 12:37:08 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@
 #  define LEFT 65361
 #  define RIGHT 65363
 #  define TAB 65289
+#  define KEY_PRESS_MASK    (1L << 0)
+#  define KEY_RELEASE_MASK  (1L << 1)
+#  define DESTROY_MASK      (1L << 17)
 # elif MACOS
 #  define W 13
 #  define A 0
@@ -56,7 +59,11 @@
 #  define LEFT 124
 #  define RIGHT 123
 #  define TAB 48
+#  define KEY_PRESS_MASK    0
+#  define KEY_RELEASE_MASK  0
+#  define DESTROY_MASK      0
 # endif
+
 
 # define ERR_TEXTURE_PATHS \
 	"Config Validation : Missing texture paths (NO, SO, WE, EA)."
@@ -175,10 +182,8 @@ void	move_player(t_player *player);
 
 /* ============================== RAYCAST ================================= */
 /* ------------------------------ dda.c ----------------------------------- */
-void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y,
-			int map_x, int map_y, float *side_dist, float *delta_dist);
-void	perform_dda(t_game *game, float *side_dist, float *delta_dist,
-			int *map_pos, int *hit_info);
+void	dda_setup(t_game *game, float ray_dir_x, float ray_dir_y);
+void	perform_dda(t_game *game);
 
 /* ------------------------------ raycast.c ------------------------------- */
 void	raycast(t_game *game);

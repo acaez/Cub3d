@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:39:16 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 16:00:28 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 12:23:26 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,12 @@ bool	validate_config(t_config *cfg, char **err)
 		*err = ft_strdup(ERR_TEXTURE_PATHS);
 		return (false);
 	}
-	if (cfg->floor_color == -1 || cfg->ceiling_color == -1)
+	if (cfg->floor_color == -1 || cfg->sky_color == -1)
 	{
 		*err = ft_strdup(ERR_COLOR_MISSING);
 		return (false);
 	}
-	if (cfg->floor_color == cfg->ceiling_color)
+	if (cfg->floor_color == cfg->sky_color)
 	{
 		*err = ft_strdup(ERR_COLOR_IDENTICAL);
 		return (false);

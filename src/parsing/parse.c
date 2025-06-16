@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:11:50 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 16:11:48 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/16 11:58:26 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static bool	parse_line(t_config *cfg, char *line)
 	else if (!ft_strcmp(tokens[0], "F"))
 		success = parse_color(tokens[1], &cfg->floor_color);
 	else if (!ft_strcmp(tokens[0], "C"))
-		success = parse_color(tokens[1], &cfg->ceiling_color);
+		success = parse_color(tokens[1], &cfg->sky_color);
 	free_map(tokens);
 	return (success);
 }
