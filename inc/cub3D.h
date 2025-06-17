@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:27:26 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:53:36 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,7 +261,7 @@ bool	read_map_lines(t_config *cfg, int fd, char *line);
 bool	handle_trailing_lines(int fd, char **err);
 /* ------------------------------ map_utils.c ---------------------------- */
 void	draw_filled_square(t_game *game, t_square sq);
-void	init_minimap(t_game *game, t_minimap *m);
+void	init_minimap(t_game *game);
 /* ------------------------------ raycast_utils.c ------------------------- */
 float	distance(float dx, float dy);
 float	fixed_dist(t_ray *r);

@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:55:49 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:26:48 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:56:08 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,41 @@ void	draw_filled_square(t_game *game, t_square sq)
 	}
 }
 
-void	init_minimap(t_game *game, t_minimap *m)
+static int	calculate_cell_size(t_config *cfg, int px_max, int py_max)
 {
-	int	px_max;
-	int	py_max;
 	int	cell_x;
 	int	cell_y;
 
+	if (cfg->map_width < ZONE_WIDTH || cfg->map_height < ZONE_HEIGHT)
+	{
+		cell_x = px_max / cfg->map_width;
+		cell_y = py_max / cfg->map_height;
+	}
+	else
+	{
+		cell_x = px_max / ZONE_WIDTH;
+		cell_y = py_max / ZONE_HEIGHT;
+	}
+	if (cell_x < cell_y)
+		return (cell_x);
+	else
+		return (cell_y);
+}
+
+void	init_minimap(t_game *game)
+{
+	int	px_max;
+	int	py_max;
+
 	px_max = WIDTH / 5;
 	py_max = HEIGHT / 5;
-	cell_x = px_max / ZONE_WIDTH;
-	cell_y = py_max / ZONE_HEIGHT;
-	if (cell_x < cell_y)
-		m->cell_size = cell_x;
-	else
-		m->cell_size = cell_y;
-	if (m->cell_size < 1)
-		m->cell_size = 1;
-	m->map_w = game->config.map_width;
-	m->map_h = game->config.map_height;
-	m->origin_x = 10;
-	m->origin_y = 10;
-	m->scale = (float)m->cell_size / (float)BLOCK;
+	game->minimap.cell_size = calculate_cell_size(&game->config, px_max,
+			py_max);
+	if (game->minimap.cell_size < 1)
+		game->minimap.cell_size = 1;
+	game->minimap.map_w = game->config.map_width;
+	game->minimap.map_h = game->config.map_height;
+	game->minimap.origin_x = 10;
+	game->minimap.origin_y = 10;
+	game->minimap.scale = (float)game->minimap.cell_size / (float)BLOCK;
 }

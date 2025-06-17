@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:59:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 15:07:56 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:53:30 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ float	distance(float x, float y)
 	return (sqrt(x * x + y * y));
 }
 
+// Too much calculation here per frame per ray !!!!!!
 float	fixed_dist(t_ray *r)
 {
 	float	delta_x;

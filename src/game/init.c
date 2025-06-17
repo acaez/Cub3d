@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:53:48 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:20:39 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:38:00 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void	init_game(t_game *game, int argc, char **argv)
 	debug = 0;
 	parse_args(argc, argv, &map_arg, &debug);
 	load_game(game, argv[map_arg], debug);
+	init_minimap(game);
 	init_mlx(game);
 	init_player(&game->player, game);
 	init_key(game);

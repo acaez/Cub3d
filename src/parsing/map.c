@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:55:49 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:31:42 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:55:32 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,7 @@ static void	draw_player_dot(t_game *game, t_minimap *m)
 
 void	draw_minimap(t_game *game)
 {
-	t_minimap	m;
-
-	init_minimap(game, &m);
-	update_player_zone(game, &m);
-	draw_map_tiles(game, &m);
-	draw_player_dot(game, &m);
+	update_player_zone(game, &game->minimap);
+	draw_map_tiles(game, &game->minimap);
+	draw_player_dot(game, &game->minimap);
 }
