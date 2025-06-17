@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:55:49 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:56:08 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 17:16:52 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,19 @@ static int	calculate_cell_size(t_config *cfg, int px_max, int py_max)
 		return (cell_x);
 	else
 		return (cell_y);
+}
+
+void	draw_tile_line(t_tile_ctx *ctx, int y, int end_x)
+{
+	int	x;
+
+	x = ctx->start_x;
+	while (x < end_x)
+	{
+		if (x < (int)ft_strlen(ctx->game->map[y]))
+			draw_map_tile(ctx, x, y);
+		x++;
+	}
 }
 
 void	init_minimap(t_game *game)

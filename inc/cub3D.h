@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:53:36 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 17:21:25 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,6 +201,7 @@ int		get_map_width(char **map);
 
 /* ------------------------------ map.c ----------------------------------- */
 void	draw_minimap(t_game *game);
+void	draw_map_tile(t_tile_ctx *ctx, int x, int y);
 
 /* ------------------------------ parse.c --------------------------------- */
 bool	parse_cub_file(t_config *cfg, char *path, char **err);
@@ -261,6 +262,7 @@ bool	read_map_lines(t_config *cfg, int fd, char *line);
 bool	handle_trailing_lines(int fd, char **err);
 /* ------------------------------ map_utils.c ---------------------------- */
 void	draw_filled_square(t_game *game, t_square sq);
+void	draw_tile_line(t_tile_ctx *ctx, int y, int end_x);
 void	init_minimap(t_game *game);
 /* ------------------------------ raycast_utils.c ------------------------- */
 float	distance(float dx, float dy);

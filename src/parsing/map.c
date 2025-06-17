@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:55:49 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:55:32 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 17:22:24 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	update_player_zone(t_game *game, t_minimap *m)
 	m->zone_y = py / ZONE_HEIGHT;
 }
 
-static void	draw_map_tile(t_tile_ctx *ctx, int x, int y)
+void	draw_map_tile(t_tile_ctx *ctx, int x, int y)
 {
 	t_square	sq;
 	char		cell;
@@ -47,7 +47,6 @@ static void	draw_map_tiles(t_game *game, t_minimap *m)
 	int			end_x;
 	int			end_y;
 	int			y;
-	int			x;
 
 	ctx.game = game;
 	ctx.minimap = m;
@@ -61,12 +60,7 @@ static void	draw_map_tiles(t_game *game, t_minimap *m)
 		end_y = m->map_h;
 	y = ctx.start_y;
 	while (y < end_y)
-	{
-		x = ctx.start_x;
-		while (x < end_x)
-			draw_map_tile(&ctx, x++, y);
-		y++;
-	}
+		draw_tile_line(&ctx, y++, end_x);
 }
 
 static void	draw_player_dot(t_game *game, t_minimap *m)
