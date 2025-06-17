@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:44:21 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 18:05:14 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:21:44 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ void	draw_scene(t_game *game)
 {
 	if (!game)
 		return ;
-		
 	if (game->debug_mode)
 	{
 		raycast(game);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug_render_utils.c                               :+:      :+:    :+:   */
+/*   debug_mode_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 14:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 14:00:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:44:04 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ void	draw_debug_player(t_game *game, t_debug_map *dm)
 	}
 }
 
-void	draw_debug_impact(t_game *game, float ray_x, float ray_y, t_debug_map *dm)
+void	draw_debug_impact(t_game *game, float ray_x, float ray_y,
+	t_debug_map *dm)
 {
 	float	impact_x;
 	float	impact_y;

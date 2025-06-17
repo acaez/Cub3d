@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 14:00:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 15:10:02 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	calculate_wall_height(t_ray *r)
 		dist = WIDTH;
 	else
 	{
-		dist = fixed_dist(r->player->x, r->player->y, r->ray_x, r->ray_y, r->game);
+		dist = fixed_dist(r);
 		if (dist <= 0.1f)
 			dist = 0.1f;
 	}

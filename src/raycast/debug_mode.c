@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug_render.c                                      :+:      :+:    :+:   */
+/*   debug_mode.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 14:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 14:00:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:45:53 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cub3D.h"
 
-static int	draw_debug_ray_point(t_game *game, float ray_x, float ray_y, t_debug_map *dm)
+static int	draw_debug_ray_point(t_game *game, float ray_x, float ray_y,
+	t_debug_map *dm)
 {
 	float	map_ray_x;
 	float	map_ray_y;
 
 	map_ray_x = dm->offset_x + ray_x / BLOCK * dm->scale;
 	map_ray_y = dm->offset_y + ray_y / BLOCK * dm->scale;
-	if (map_ray_x >= 0 && map_ray_x < WIDTH && 
-		map_ray_y >= 0 && map_ray_y < HEIGHT)
+	if (map_ray_x >= 0 && map_ray_x < WIDTH
+		&& map_ray_y >= 0 && map_ray_y < HEIGHT)
 	{
 		put_pixel(game, map_ray_x, map_ray_y, 0xFF0000);
 		return (0);

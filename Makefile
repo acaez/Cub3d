@@ -22,6 +22,9 @@ SRC      = main.c \
 		   utils/debug_utils.c \
 		   utils/init_utils.c \
 		   utils/parse_utils.c \
+		   utils/parse_utils2.c \
+		   utils/parse_utils3.c \
+		   utils/map_utils.c \
 		   utils/raycast_utils.c \
 		   utils/valid_utils.c \
 

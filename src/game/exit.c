@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:50:08 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 14:40:58 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:39:06 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,8 @@ static void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_image(game->mlx, game->img);
 		if (game->win)
 			mlx_destroy_window(game->mlx, game->win);
-		#ifdef LINUX
 		if (game->mlx)
 			mlx_destroy_display(game->mlx);
-		#endif
 		if (game->mlx)
 			free(game->mlx);
 		free_config(&game->config);

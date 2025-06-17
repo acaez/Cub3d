@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 18:03:14 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:27:26 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,16 @@
 # elif defined(__APPLE__) || defined(__MACOS__)
 #  include "../mlx/minilibx_opengl/mlx.h"
 #  define MACOS 1
+# else
+#  error "Unsupported platform: only Linux and macOS are supported"
 # endif
 
 # define WIDTH     1280
 # define HEIGHT    720
 # define BLOCK     64
 # define PI        3.14159265359
+# define ZONE_WIDTH 32
+# define ZONE_HEIGHT 16
 # ifdef LINUX
 #  define W 119
 #  define A 97
@@ -104,6 +108,22 @@ typedef struct s_player
 	struct s_game	*game;
 }	t_player;
 
+typedef struct s_minimap
+{
+	int		x;
+	int		y;
+	int		size;
+	int		color;
+	int		map_w;
+	int		map_h;
+	int		cell_size;
+	int		origin_x;
+	int		origin_y;
+	float	scale;
+	int zone_x;
+	int zone_y;
+}	t_minimap;
+
 typedef struct s_game
 {
 	void		*mlx;
@@ -117,21 +137,8 @@ typedef struct s_game
 	bool		debug_mode;
 	t_player	player;
 	t_config	config;
+	t_minimap	minimap;
 }	t_game;
-
-typedef struct s_minimap
-{
-	int		x;
-	int		y;
-	int		size;
-	int		color;
-	int		map_w;
-	int		map_h;
-	int		cell_size;
-	int		origin_x;
-	int		origin_y;
-	float	scale;
-}	t_minimap;
 
 typedef struct s_debug_map
 {
@@ -155,6 +162,22 @@ typedef struct s_ray
 	float	height;
 }	t_ray;
 
+typedef struct s_square
+{
+	int	x;
+	int	y;
+	int	size;
+	int	color;
+}	t_square;
+
+typedef struct s_tile_ctx
+{
+	t_game		*game;
+	t_minimap	*minimap;
+	int			start_x;
+	int			start_y;
+}	t_tile_ctx;
+
 /* ============================== GAME  =================================== */
 /* ------------------------------ exit.c ---------------------------------- */
 void	free_map(char **map);
@@ -177,8 +200,6 @@ int		get_map_height(char **map);
 int		get_map_width(char **map);
 
 /* ------------------------------ map.c ----------------------------------- */
-char	**get_map(void);
-void	draw_filled_square(t_game *game, t_minimap minimap);
 void	draw_minimap(t_game *game);
 
 /* ------------------------------ parse.c --------------------------------- */
@@ -211,7 +232,8 @@ void	draw_debug_background(t_game *game);
 int		calculate_debug_scale(t_game *game, int *offset_x, int *offset_y);
 void	draw_debug_cell(t_game *game, int x, int y, t_debug_map *dm);
 void	draw_debug_player(t_game *game, t_debug_map *dm);
-void	draw_debug_impact(t_game *game, float ray_x, float ray_y, t_debug_map *dm);
+void	draw_debug_impact(t_game *game, float ray_x, float ray_y,
+		t_debug_map *dm);
 
 /* ------------------------------ debug_utils.c --------------------------- */
 void	print_config(const t_config *cfg);
@@ -227,10 +249,22 @@ char	**ft_realloc_tab(char **old, int new_size);
 bool	is_map_line(char *line);
 bool	parse_color(char *line, int *color);
 bool	set_texture(t_config *cfg, const char *id, const char *path);
-
+/* ------------------------------ pars_utils2.c ---------------------------- */
+void	copy_normalized_spaces(const char *src, char *dst);
+char	*normalize_spaces(char *str);
+bool	is_empty_line(const char *line);
+char	*remove_trailing_newline(char *line);
+/* ------------------------------ pars_utils3.c ---------------------------- */
+bool	parse_line(t_config *cfg, char *line);
+bool	add_line_to_map(t_config *cfg, char *line, int *sz, int *cap);
+bool	read_map_lines(t_config *cfg, int fd, char *line);
+bool	handle_trailing_lines(int fd, char **err);
+/* ------------------------------ map_utils.c ---------------------------- */
+void	draw_filled_square(t_game *game, t_square sq);
+void	init_minimap(t_game *game, t_minimap *m);
 /* ------------------------------ raycast_utils.c ------------------------- */
 float	distance(float dx, float dy);
-float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
+float	fixed_dist(t_ray *r);
 int		check_collision(t_config *config, float x, float y);
 
 /* ------------------------------ valide_utils.c -------------------------- */
