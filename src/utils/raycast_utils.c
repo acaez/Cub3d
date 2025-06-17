@@ -12,58 +12,30 @@
 
 #include "../../inc/cub3D.h"
 
-float	distance(float dx, float dy)
+float distance(float x, float y)
 {
-	return (sqrt(dx * dx + dy * dy));
+    return sqrt(x * x + y * y);
 }
 
-bool	touch_wall(t_game *game, float px, float py)
+float fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
 {
-	int	x;
-	int	y;
-
-	x = (int)(px / BLOCK);
-	y = (int)(py / BLOCK);
-	if (y < 0 || !game->map[y])
-		return (true);
-	if (x < 0 || x >= (int)ft_strlen(game->map[y]))
-		return (true);
-	if (game->map[y][x] == '1')
-		return (true);
-	return (false);
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+    float angle = atan2(delta_y, delta_x) - game->player.angle;
+    float fix_dist = distance(delta_x, delta_y) * cos(angle);
+    return fix_dist;
 }
 
-int	get_wall_color(int side, int wall_dir)
+int	check_collision(t_config *config, float x, float y)
 {
-	if (side == 0)
-	{
-		if (wall_dir == 1)
-			return (0xAA0000);
-		return (0x880000);
-	}
-	else
-	{
-		if (wall_dir == 1)
-			return (0xFF0000);
-		return (0xDD0000);
-	}
-}
+	int	map_x;
+	int	map_y;
 
-void	calculate_wall_height(float perp_wall_dist, int *draw_points)
-{
-	int		line_height;
-	int		draw_start;
-	int		draw_end;
-	float	projection;
-
-	projection = 0.5f * (WIDTH / (2 * tan(PI / 6)));
-	line_height = (int)(projection / perp_wall_dist);
-	draw_start = -line_height / 2 + HEIGHT / 2;
-	if (draw_start < 0)
-		draw_start = 0;
-	draw_end = line_height / 2 + HEIGHT / 2;
-	if (draw_end >= HEIGHT)
-		draw_end = HEIGHT - 1;
-	draw_points[0] = draw_start;
-	draw_points[1] = draw_end;
+	map_x = (int)(x / BLOCK);
+	map_y = (int)(y / BLOCK);
+	if (!is_inside_map(config->map, map_y, map_x))
+		return (0);
+	if (is_open_char(config->map[map_y][map_x]))
+		return (1);
+	return (0);
 }

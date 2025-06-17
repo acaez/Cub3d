@@ -6,93 +6,100 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 17:49:11 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 11:00:00 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cub3D.h"
 
-static void	draw_wall_segment(t_game *game, int x, int *draw_points,
-		int wall_color)
+void	put_pixel(t_game *game, int x, int y, int color)
 {
-	int	y;
-	int	draw_start;
-	int	draw_end;
+	int	index;
 
-	draw_start = draw_points[0];
-	draw_end = draw_points[1];
-	y = draw_start;
-	while (y <= draw_end)
+	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
 	{
-		put_pixel(game, x, y, wall_color);
-		y++;
+		index = y * game->size_line + x * (game->bpp / 8);
+		game->data[index] = color & 0xFF;
+		game->data[index + 1] = (color >> 8) & 0xFF;
+		game->data[index + 2] = (color >> 16) & 0xFF;
 	}
 }
 
-static void	draw_wall_column(t_game *game, int x, float perp_wall_dist,
-		t_ray wall)
+void draw_square(t_game *game, int x, int y, int size, int color)
 {
-	int	draw_points[2];
-	int	wall_color;
-
-	calculate_wall_height(perp_wall_dist, draw_points);
-	wall_color = get_wall_color(wall.side, wall.wall_dir);
-	draw_wall_segment(game, x, draw_points, wall_color);
+    for(int i = 0; i < size; i++)
+        put_pixel(x + i, y, color, game);
+    for(int i = 0; i < size; i++)
+        put_pixel(x, y + i, color, game);
+    for(int i = 0; i < size; i++)
+        put_pixel(x + size, y + i, color, game);
+    for(int i = 0; i < size; i++)
+        put_pixel(x + i, y + size, color, game);
 }
 
-static void	calculate_ray_direction(t_game *game, int x, float *ray_dir)
+void draw_debug(t_game *game, t_player *player, float start_x)
 {
-	float	camera_x;
+	float cos_angle;
+    float sin_angle;
+	float ray_x;
+    float ray_y;
 
-	camera_x = 2.0f * x / WIDTH - 1.0f;
-	ray_dir[0] = cos(game->player.angle) + camera_x * -sin(game->player.angle);
-	ray_dir[1] = sin(game->player.angle) + camera_x * cos(game->player.angle);
+	cos_angle = cos(start_x);
+	sin_angle = sin(start_x);
+	ray_x = player->x;
+    ray_y = player->y;
+	while(!check_collision(&game->config, ray_x, ray_y))
+    {
+        if(game->debug_mode)
+            put_pixel(game, ray_x, ray_y, 0xFF0000);
+        ray_x += cos_angle;
+        ray_y += sin_angle;
+    }
+}
+void draw_line(t_game *game, t_player *player, float start_x, int i)
+{
+	float	ray_x;
+    float	ray_y;
+	float	dist;
+	float	height;
+	int		start_y;
+	int		end;
+
+    if(!game->debug_mode)
+    {
+        dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
+        height = (BLOCK / dist) * (WIDTH / 2);
+        start_y = (HEIGHT - height) / 2;
+        end = start_y + height;
+        while(start_y < end)
+        {
+            put_pixel(i, start_y, 255, game);
+            start_y++;
+        }
+    }
 }
 
-static float	calculate_perp_distance(t_game *game, float *ray_dir)
+int raycast(t_game *game)
 {
-	float	perp_wall_dist;
-	int		hit_side;
-	int		hit_x;
-	int		hit_y;
-
-	hit_side = game->ray.hit_info[2];
-	hit_x = game->ray.hit_info[0];
-	hit_y = game->ray.hit_info[1];
-	if (hit_side == 0)
-	{
-		perp_wall_dist = (hit_x - game->player.x / BLOCK
-				+ (1 - (int)game->ray.side_dist[2]) / 2) / ray_dir[0];
-	}
-	else
-	{
-		perp_wall_dist = (hit_y - game->player.y / BLOCK
-				+ (1 - (int)game->ray.side_dist[3]) / 2) / ray_dir[1];
-	}
-	return (perp_wall_dist);
-}
-
-void	raycast(t_game *game)
-{
-	t_ray	wall;
-	int		x;
-	float	ray_dir[2];
-	float	perp_wall_dist;
-
-	if (!game || !game->map)
-		return ;
-	x = 0;
-	while (x < WIDTH)
-	{
-		calculate_ray_direction(game, x, ray_dir);
-		game->ray.map_pos[0] = (int)(game->player.x / BLOCK);
-		game->ray.map_pos[1] = (int)(game->player.y / BLOCK);
-		dda_setup(game, ray_dir[0], ray_dir[1]);
-		perform_dda(game);
-		perp_wall_dist = calculate_perp_distance(game, ray_dir);
-		wall.side = game->ray.hit_info[2];
-		wall.wall_dir = game->ray.hit_info[3];
-		draw_wall_column(game, x, perp_wall_dist, wall);
-		x++;
-	}
+    t_player	*player;
+	float       fraction;
+	float       start_x;
+	int         i;
+	
+	player = &game->player;
+	if(game->debug_mode)
+    {
+        draw_square(game, 0, 0, WIDTH, 0x000000);
+        draw_map(game);
+    }
+    fraction = PI / 3 / WIDTH;
+    start_x = player->angle - PI / 6;
+    i = 0;
+    while(i < WIDTH)
+    {
+        draw_line(player, game, start_x, i);
+        start_x += fraction;
+        i++;
+    }
+    return 0;
 }

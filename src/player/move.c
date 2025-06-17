@@ -12,66 +12,25 @@ static void	handle_rotation(t_player *player)
 		player->angle -= 2 * PI;
 }
 
-static int	check_collision(t_player *player, float x, float y)
-{
-	if (touch_wall(player->game, x + 0.05 * BLOCK, y))
-		return (1);
-	if (touch_wall(player->game, x - 0.05 * BLOCK, y))
-		return (1);
-	return (0);
-}
-
-static void	move_forward_backward(t_player *player)
-{
-	float	dx;
-	float	dy;
-	float	dir;
+static void	move_forward(t_player *player)
+{ 
 	float	new_x;
 	float	new_y;
 
-	if (!player->key_up && !player->key_down)
-		return ;
-	dx = cos(player->angle);
-	dy = sin(player->angle);
 	if (player->key_up)
-		dir = 1.0;
-	else
-		dir = -1.0;
-	new_x = player->x + dx * player->speed * dir;
-	new_y = player->y + dy * player->speed * dir;
-	if (!check_collision(player, new_x, player->y))
-		player->x = new_x;
-	if (!check_collision(player, player->x, new_y))
-		player->y = new_y;
-}
-
-static void	move_strafe(t_player *player)
-{
-	float	sx;
-	float	sy;
-	float	dir;
-	float	new_x;
-	float	new_y;
-
-	if (!player->key_left && !player->key_right)
-		return ;
-	sx = cos(player->angle + PI / 2);
-	sy = sin(player->angle + PI / 2);
-	if (player->key_right)
-		dir = 1.0;
-	else
-		dir = -1.0;
-	new_x = player->x + sx * player->speed * dir;
-	new_y = player->y + sy * player->speed * dir;
-	if (!check_collision(player, new_x, player->y))
-		player->x = new_x;
-	if (!check_collision(player, player->x, new_y))
-		player->y = new_y;
+	{
+		new_x = player->x + cos(player->angle) * player->speed;
+		new_y = player->y + sin(player->angle) * player->speed;
+		if (check_collision(&player->config, new_x, new_y))
+		{
+			player->x = new_x;
+			player->y = new_y;
+		}
+	}
 }
 
 void	move_player(t_player *player)
 {
 	handle_rotation(player);
-	move_forward_backward(player);
-	move_strafe(player);
+	move_forward(player);
 }

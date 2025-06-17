@@ -12,7 +12,7 @@
 
 #include "../../inc/cub3D.h"
 
-void	init_mlx(t_game *game)
+static void	init_mlx(t_game *game)
 {
 	game->mlx = mlx_init();
 	if (!game->mlx)
@@ -27,6 +27,8 @@ void	init_mlx(t_game *game)
 			&game->endian);
 	if (!game->data)
 		exit_error(game, "mlx_get_data_addr() failed");
+	if (!load_textures(game))
+		exit_error(game, ERR_TEXTURE_LOAD);
 }
 
 static void	load_game(t_game *game, char *map_path, int debug_mode)

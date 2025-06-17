@@ -25,6 +25,7 @@ SRC      = main.c \
 		   utils/parse_utils.c \
 		   utils/raycast_utils.c \
 		   utils/valid_utils.c \
+		   utils/texture_utils.c \
 
 OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 
