@@ -27,12 +27,29 @@ static void	handle_rotation(t_player *player)
 static void	try_move_player(t_player *player, float new_x, float new_y)
 {
 	t_game	*game;
+	float	old_x;
+	float	old_y;
 
 	game = player->game;
 	if (!game)
 		return ;
-	if (!check_collision(&game->config, new_x, new_y))
+	
+	// Sauvegarder l'ancienne position
+	old_x = player->x;
+	old_y = player->y;
+	
+	// Essayer de déplacer X et Y indépendamment pour permettre de glisser le long des murs
+	if (!check_collision(&game->config, new_x, old_y))
+		player->x = new_x;
+	
+	if (!check_collision(&game->config, player->x, new_y))
+		player->y = new_y;
+	
+	// Si le joueur est toujours bloqué, essayer avec une position légèrement modifiée
+	if (player->x == old_x && player->y == old_y && 
+		!check_collision(&game->config, new_x, new_y))
 	{
+		// Déplacer directement si l'ensemble du mouvement est sécuritaire
 		player->x = new_x;
 		player->y = new_y;
 	}

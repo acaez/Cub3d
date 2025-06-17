@@ -19,6 +19,7 @@
 # include <stdbool.h>
 # include <math.h>
 # include <fcntl.h>
+# include <time.h>
 # include <unistd.h>
 
 # if defined(__linux__) || defined(__LINUX__)
@@ -77,6 +78,32 @@
 	"Map Validation : Map must contain exactly one player position."
 # define ERR_MAP_NOT_CLOSED \
 	"Map Validation : Map is not properly closed by walls."
+
+typedef struct s_trigo
+{
+	float	*cos_table;
+	float	*sin_table;
+	int		table_size;
+}	t_trigo;
+
+typedef struct s_ray_hit
+{
+	float	distance;
+	int		side;
+	float	wall_x;
+	int		tex_num;
+}	t_ray_hit;
+
+typedef struct s_texture
+{
+	void	*img;
+	char	*data;
+	int		width;
+	int		height;
+	int		bpp;
+	int		size_line;
+	int		endian;
+}	t_texture;
 
 typedef struct s_config
 {
@@ -138,6 +165,11 @@ typedef struct s_game
 	t_player	player;
 	t_config	config;
 	t_minimap	minimap;
+	t_trigo		trigo;
+	clock_t		last_frame;
+	t_texture	textures[4]; // NO, SO, WE, EA
+	float		fraction;    // Précalculé pour le raycasting
+	float		start_angle; // Précalculé pour le raycasting
 }	t_game;
 
 typedef struct s_debug_map
@@ -155,6 +187,7 @@ typedef struct s_ray
 	int		wall_color;
 	float	ray_x;
 	float	ray_y;
+	float	angle; 
 	float	cos_angle;
 	float	sin_angle;
 	int		max_steps;
@@ -182,6 +215,7 @@ typedef struct s_tile_ctx
 /* ------------------------------ exit.c ---------------------------------- */
 void	free_map(char **map);
 void	free_config(t_config *cfg);
+void	free_trigo(t_trigo *trigo);
 void	exit_error(t_game *game, char *msg);
 int		close_window(t_game *game);
 
@@ -225,7 +259,9 @@ void	draw_debug_map(t_game *game);
 
 /* ------------------------------ raycast.c ------------------------------- */
 void	put_pixel(t_game *game, int x, int y, int color);
+t_ray_hit	calculate_distance(t_game *game, float start_x, float start_y, float angle);
 int		raycast(t_game *game);
+int		load_textures(t_game *game);
 
 /* ============================== UTILITY ================================= */
 /* ------------------------------ debug_mode_utils.c ---------------------- */
@@ -267,6 +303,8 @@ void	init_minimap(t_game *game);
 /* ------------------------------ raycast_utils.c ------------------------- */
 float	distance(float dx, float dy);
 float	fixed_dist(t_ray *r);
+void	get_trigo_value(t_trigo *trigo, float angle, float *cos_val, float *sin_val);
+void	limit_fps(t_game *game);
 int		check_collision(t_config *config, float x, float y);
 
 /* ------------------------------ valide_utils.c -------------------------- */

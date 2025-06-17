@@ -44,6 +44,14 @@ void	free_config(t_config *cfg)
 	}
 }
 
+void	free_trigo(t_trigo *trigo)
+{
+	if (trigo->cos_table)
+		free(trigo->cos_table);
+	if (trigo->sin_table)
+		free(trigo->sin_table);
+}
+
 static void	exit_game(t_game *game, int exit_code)
 {
 	if (game)
@@ -52,8 +60,8 @@ static void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_image(game->mlx, game->img);
 		if (game->win)
 			mlx_destroy_window(game->mlx, game->win);
-		if (game->mlx)
-			mlx_destroy_display(game->mlx);
+		//if (game->mlx)
+		//	mlx_destroy_display(game->mlx);
 		if (game->mlx)
 			free(game->mlx);
 		free_config(&game->config);
