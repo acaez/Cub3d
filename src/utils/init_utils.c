@@ -83,6 +83,7 @@ void	init_player(t_player *player, t_game *game)
 	player->rot_left = false;
 	player->rot_right = false;
 	player->game = game;
+	player->config = game->config;
 	game->map = game->config.map;
 	setup_pos(game);
 }

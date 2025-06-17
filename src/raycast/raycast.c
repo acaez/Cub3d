@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 11:00:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:00:00 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,81 +25,89 @@ void	put_pixel(t_game *game, int x, int y, int color)
 	}
 }
 
-void draw_square(t_game *game, int x, int y, int size, int color)
+static void	calculate_wall_height(t_ray *r)
 {
-    for(int i = 0; i < size; i++)
-        put_pixel(x + i, y, color, game);
-    for(int i = 0; i < size; i++)
-        put_pixel(x, y + i, color, game);
-    for(int i = 0; i < size; i++)
-        put_pixel(x + size, y + i, color, game);
-    for(int i = 0; i < size; i++)
-        put_pixel(x + i, y + size, color, game);
-}
-
-void draw_debug(t_game *game, t_player *player, float start_x)
-{
-	float cos_angle;
-    float sin_angle;
-	float ray_x;
-    float ray_y;
-
-	cos_angle = cos(start_x);
-	sin_angle = sin(start_x);
-	ray_x = player->x;
-    ray_y = player->y;
-	while(!check_collision(&game->config, ray_x, ray_y))
-    {
-        if(game->debug_mode)
-            put_pixel(game, ray_x, ray_y, 0xFF0000);
-        ray_x += cos_angle;
-        ray_y += sin_angle;
-    }
-}
-void draw_line(t_game *game, t_player *player, float start_x, int i)
-{
-	float	ray_x;
-    float	ray_y;
 	float	dist;
-	float	height;
-	int		start_y;
-	int		end;
 
-    if(!game->debug_mode)
-    {
-        dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
-        height = (BLOCK / dist) * (WIDTH / 2);
-        start_y = (HEIGHT - height) / 2;
-        end = start_y + height;
-        while(start_y < end)
-        {
-            put_pixel(i, start_y, 255, game);
-            start_y++;
-        }
-    }
+	if (r->steps >= r->max_steps)
+		dist = WIDTH;
+	else
+	{
+		dist = fixed_dist(r->player->x, r->player->y, r->ray_x, r->ray_y, r->game);
+		if (dist <= 0.1f)
+			dist = 0.1f;
+	}
+	r->height = (BLOCK / dist) * ((float)WIDTH / 2);
+	if (r->height > HEIGHT * 3)
+		r->height = HEIGHT * 3;
 }
 
-int raycast(t_game *game)
+static void	draw_wall_line(t_ray *r)
 {
-    t_player	*player;
-	float       fraction;
-	float       start_x;
-	int         i;
-	
+	int	start_y;
+	int	end_y;
+
+	start_y = (HEIGHT - r->height) / 2;
+	if (start_y < 0)
+		start_y = 0;
+	end_y = start_y + r->height;
+	if (end_y > HEIGHT)
+		end_y = HEIGHT;
+	while (start_y < end_y)
+	{
+		put_pixel(r->game, r->i, start_y, r->wall_color);
+		start_y++;
+	}
+}
+
+static void	cast_ray(t_game *game, t_player *player, float angle, int i)
+{
+	t_ray	r;
+
+	r.game = game;
+	r.player = player;
+	r.i = i;
+	r.wall_color = 0xFFFFFF;
+	r.ray_x = player->x;
+	r.ray_y = player->y;
+	r.cos_angle = cos(angle) * 0.5;
+	r.sin_angle = sin(angle) * 0.5;
+	r.max_steps = 1000;
+	r.steps = 0;
+	while (r.steps < r.max_steps)
+	{
+		r.ray_x += r.cos_angle;
+		r.ray_y += r.sin_angle;
+		r.steps++;
+		if (check_collision(&game->config, r.ray_x, r.ray_y))
+			break ;
+	}
+	calculate_wall_height(&r);
+	draw_wall_line(&r);
+}
+
+int	raycast(t_game *game)
+{
+	t_player	*player;
+	float		fraction;
+	float		start_x;
+	int			i;
+
 	player = &game->player;
-	if(game->debug_mode)
-    {
-        draw_square(game, 0, 0, WIDTH, 0x000000);
-        draw_map(game);
-    }
-    fraction = PI / 3 / WIDTH;
-    start_x = player->angle - PI / 6;
-    i = 0;
-    while(i < WIDTH)
-    {
-        draw_line(player, game, start_x, i);
-        start_x += fraction;
-        i++;
-    }
-    return 0;
+	if (game->debug_mode)
+	{
+		draw_debug_map(game);
+		draw_debug_rays(game, player);
+		return (0);
+	}
+	fraction = PI / 3 / WIDTH;
+	start_x = player->angle - PI / 6;
+	i = 0;
+	while (i < WIDTH)
+	{
+		cast_ray(game, player, start_x, i);
+		start_x += fraction;
+		i++;
+	}
+	return (0);
 }

@@ -12,8 +12,22 @@ static void	handle_rotation(t_player *player)
 		player->angle -= 2 * PI;
 }
 
-static void	move_forward(t_player *player)
-{ 
+static void	try_move_player(t_player *player, float new_x, float new_y)
+{
+	t_game	*game;
+
+	game = player->game;
+	if (!game)
+		return ;
+	if (!check_collision(&game->config, new_x, new_y))
+	{
+		player->x = new_x;
+		player->y = new_y;
+	}
+}
+
+static void	handle_movement_keys(t_player *player)
+{
 	float	new_x;
 	float	new_y;
 
@@ -21,11 +35,35 @@ static void	move_forward(t_player *player)
 	{
 		new_x = player->x + cos(player->angle) * player->speed;
 		new_y = player->y + sin(player->angle) * player->speed;
-		if (check_collision(&player->config, new_x, new_y))
-		{
-			player->x = new_x;
-			player->y = new_y;
-		}
+		try_move_player(player, new_x, new_y);
+	}
+	if (player->key_down)
+	{
+		new_x = player->x - cos(player->angle) * player->speed;
+		new_y = player->y - sin(player->angle) * player->speed;
+		try_move_player(player, new_x, new_y);
+	}
+}
+
+static void	move_forward(t_player *player)
+{
+	float	new_x;
+	float	new_y;
+
+	if (!player || !player->game)
+		return ;
+	handle_movement_keys(player);
+	if (player->key_left)
+	{
+		new_x = player->x + cos(player->angle - PI / 2) * player->speed;
+		new_y = player->y + sin(player->angle - PI / 2) * player->speed;
+		try_move_player(player, new_x, new_y);
+	}
+	if (player->key_right)
+	{
+		new_x = player->x + cos(player->angle + PI / 2) * player->speed;
+		new_y = player->y + sin(player->angle + PI / 2) * player->speed;
+		try_move_player(player, new_x, new_y);
 	}
 }
 

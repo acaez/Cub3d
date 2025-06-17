@@ -74,11 +74,19 @@ void	draw_scene(t_game *game)
 {
 	if (!game)
 		return ;
-	draw_floor(game);
-	draw_sky(game);
-	raycast(game);
-	if (game->config.map)
-		draw_minimap(game);
+		
+	if (game->debug_mode)
+	{
+		raycast(game);
+	}
+	else
+	{
+		draw_floor(game);
+		draw_sky(game);
+		raycast(game);
+		if (game->config.map)
+			draw_minimap(game);
+	}
 }
 
 int	game_loop(t_game *game)

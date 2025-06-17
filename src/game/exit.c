@@ -48,7 +48,6 @@ static void	exit_game(t_game *game, int exit_code)
 {
 	if (game)
 	{
-		free_textures(game);
 		if (game->img)
 			mlx_destroy_image(game->mlx, game->img);
 		if (game->win)

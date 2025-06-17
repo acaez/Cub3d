@@ -10,22 +10,20 @@ SRC      = main.c \
 		   game/exit.c \
 		   game/game.c \
 		   game/init.c \
-		   game/scene.c \
 		   parsing/get_map.c \
 		   parsing/map.c \
 		   parsing/parse.c \
 		   parsing/valid.c \
-		   player/draw.c \
 		   player/keys.c \
 		   player/move.c \
-		   raycast/dda.c \
 		   raycast/raycast.c \
+		   raycast/debug_mode.c \
+		   utils/debug_mode_utils.c \
 		   utils/debug_utils.c \
 		   utils/init_utils.c \
 		   utils/parse_utils.c \
 		   utils/raycast_utils.c \
 		   utils/valid_utils.c \
-		   utils/texture_utils.c \
 
 OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 

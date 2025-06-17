@@ -31,11 +31,15 @@ int	check_collision(t_config *config, float x, float y)
 	int	map_x;
 	int	map_y;
 
+	if (!config || !config->map)
+		return (1); // Considérer comme une collision si la config ou la map est NULL
 	map_x = (int)(x / BLOCK);
 	map_y = (int)(y / BLOCK);
+	if (map_x < 0 || map_y < 0)
+		return (1); // Considérer comme une collision si hors limites
 	if (!is_inside_map(config->map, map_y, map_x))
-		return (0);
-	if (is_open_char(config->map[map_y][map_x]))
-		return (1);
-	return (0);
+		return (1); // Considérer comme une collision si hors de la carte
+	if (config->map[map_y] && !is_open_char(config->map[map_y][map_x]))
+		return (1); // Collision si ce n'est pas un caractère ouvert (mur)
+	return (0); // Pas de collision
 }

@@ -73,8 +73,6 @@
 	"Map Validation : Map must contain exactly one player position."
 # define ERR_MAP_NOT_CLOSED \
 	"Map Validation : Map is not properly closed by walls."
-# define ERR_TEXTURE_LOAD \
-	"Texture Validation : Failed to load one or more textures."
 
 typedef struct s_config
 {
@@ -103,6 +101,7 @@ typedef struct s_player
 	bool			rot_left;
 	bool			rot_right;
 	t_config		config;
+	struct s_game	*game;
 }	t_player;
 
 typedef struct s_game
@@ -111,6 +110,7 @@ typedef struct s_game
 	void		*win;
 	void		*img;
 	char		*data;
+	char		**map;
 	int			bpp;
 	int			size_line;
 	int			endian;
@@ -133,6 +133,28 @@ typedef struct s_minimap
 	float	scale;
 }	t_minimap;
 
+typedef struct s_debug_map
+{
+	int		scale;
+	int		offset_x;
+	int		offset_y;
+}	t_debug_map;
+
+typedef struct s_ray
+{
+	t_game	*game;
+	t_player *player;
+	int		i;
+	int		wall_color;
+	float	ray_x;
+	float	ray_y;
+	float	cos_angle;
+	float	sin_angle;
+	int		max_steps;
+	int		steps;
+	float	height;
+}	t_ray;
+
 /* ============================== GAME  =================================== */
 /* ------------------------------ exit.c ---------------------------------- */
 void	free_map(char **map);
@@ -146,7 +168,6 @@ void	draw_scene(t_game *game);
 int		game_loop(t_game *game);
 
 /* ------------------------------ init.c ---------------------------------- */
-void	init_mlx(t_game *game);
 void	init_game(t_game *game, int argc, char **argv);
 
 /* ============================== PARSING ================================= */
@@ -168,7 +189,6 @@ bool	validate_map(char **map, char **err);
 bool	validate_config(t_config *cfg, char **err);
 
 /* ============================== PLAYER ================================== */
-
 /* ------------------------------ keys.c ---------------------------------- */
 int		key_press(int keycode, t_game *game);
 int		key_release(int keycode, t_game *game);
@@ -177,10 +197,26 @@ int		key_release(int keycode, t_game *game);
 void	move_player(t_player *player);
 
 /* ============================== RAYCAST ================================= */
+/* ------------------------------ debug_mode.c ---------------------------- */
+void	draw_debug_rays(t_game *game, t_player *player);
+void	draw_debug_map(t_game *game);
+
 /* ------------------------------ raycast.c ------------------------------- */
-int	(t_game *game);
+void	put_pixel(t_game *game, int x, int y, int color);
+int		raycast(t_game *game);
 
 /* ============================== UTILITY ================================= */
+/* ------------------------------ debug_mode_utils.c ---------------------- */
+void	draw_debug_background(t_game *game);
+int		calculate_debug_scale(t_game *game, int *offset_x, int *offset_y);
+void	draw_debug_cell(t_game *game, int x, int y, t_debug_map *dm);
+void	draw_debug_player(t_game *game, t_debug_map *dm);
+void	draw_debug_impact(t_game *game, float ray_x, float ray_y, t_debug_map *dm);
+
+/* ------------------------------ debug_utils.c --------------------------- */
+void	print_config(const t_config *cfg);
+void	print_map(char **map);
+
 /* ------------------------------ draw_utils.c ---------------------------- */
 void	setup_dir(t_game *game, char direction);
 void	setup_pos(t_game *game);
@@ -194,9 +230,8 @@ bool	set_texture(t_config *cfg, const char *id, const char *path);
 
 /* ------------------------------ raycast_utils.c ------------------------- */
 float	distance(float dx, float dy);
-bool	touch_wall(t_game *game, float px, float py);
-int		get_wall_color(int side, int wall_dir);
-void	calculate_wall_height(float perp_wall_dist, int *draw_points);
+float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
+int		check_collision(t_config *config, float x, float y);
 
 /* ------------------------------ valide_utils.c -------------------------- */
 bool	is_inside_map(char **map, int y, int x);
@@ -206,19 +241,8 @@ bool	line_has_only_valid(char *s);
 /* ------------------------------ init_utils.c ---------------------------- */
 void	init_config(t_config *cfg);
 void	init_key(t_game *game);
-void	init_mlx(t_game *game);
 void	setup_dir(t_game *game, char direction);
 void	setup_pos(t_game *game);
 void	init_player(t_player *player, t_game *game);
-
-/* ------------------------------ debug_utils.c --------------------------- */
-void	print_config(const t_config *cfg);
-void	print_map(char **map);
-
-/* ------------------------------ texture_utils.c -------------------------- */
-bool	load_textures(t_game *game);
-void	free_textures(t_game *game);
-int		get_texture_color(t_texture *texture, int x, int y);
-void	calculate_texture_coords(t_game *game, float perp_wall_dist, float ray_dir_x, float ray_dir_y);
 
 #endif
