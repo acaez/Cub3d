@@ -37,17 +37,17 @@ static void	init_ray_direction(t_game *game, float angle, float *dx, float *dy)
 }
 
 static void	init_step_and_dist(float start, float dir, float delta,
-	int map_pos, int *step, float *side_dist)
+	t_step_ctx ctx)
 {
 	if (dir < 0)
 	{
-		*step = -1;
-		*side_dist = (start / BLOCK - map_pos) * delta;
+		*(ctx.step) = -1;
+		*(ctx.side_dist) = (start / BLOCK - ctx.map_pos) * delta;
 	}
 	else
 	{
-		*step = 1;
-		*side_dist = (map_pos + 1.0f - start / BLOCK) * delta;
+		*(ctx.step) = 1;
+		*(ctx.side_dist) = (ctx.map_pos + 1.0f - start / BLOCK) * delta;
 	}
 }
 
@@ -64,28 +64,26 @@ static int	is_blocking_cell(t_game *game, int mx, int my)
 	return (0);
 }
 
-static void	perform_dda(t_game *game, int *map_x, int *map_y,
-	float *side_x, float *side_y, float delta_x, float delta_y,
-	int *step_x, int *step_y, int *side)
+static void	perform_dda(t_game *game, t_dda_ctx ctx)
 {
 	int	hit;
 
 	hit = 0;
 	while (!hit)
 	{
-		if (*side_x < *side_y)
+		if (*(ctx.side_x) < *(ctx.side_y))
 		{
-			*side_x += delta_x;
-			*map_x += *step_x;
-			*side = 0;
+			*(ctx.side_x) += ctx.delta_x;
+			*(ctx.map_x) += *(ctx.step_x);
+			*(ctx.side) = 0;
 		}
 		else
 		{
-			*side_y += delta_y;
-			*map_y += *step_y;
-			*side = 1;
+			*(ctx.side_y) += ctx.delta_y;
+			*(ctx.map_y) += *(ctx.step_y);
+			*(ctx.side) = 1;
 		}
-		hit = is_blocking_cell(game, *map_x, *map_y);
+		hit = is_blocking_cell(game, *(ctx.map_x), *(ctx.map_y));
 	}
 }
 
@@ -117,38 +115,47 @@ static int	get_texture_index(int side, float dx, float dy)
 	}
 }
 
-t_ray_hit	calculate_distance(t_game *game, float start_x, float start_y, float angle)
+static void	setup_ray_ctx(t_game *game, t_ray_ctx *ctx)
+{
+	init_ray_direction(game, ctx->angle, &ctx->dx, &ctx->dy);
+	ctx->map_x = (int)(ctx->start_x / BLOCK);
+	ctx->map_y = (int)(ctx->start_y / BLOCK);
+	ctx->delta_x = fabsf(1.0f / ctx->dx);
+	ctx->delta_y = fabsf(1.0f / ctx->dy);
+	init_step_and_dist(ctx->start_x, ctx->dx, ctx->delta_x,
+		(t_step_ctx){ctx->map_x, &ctx->step_x, &ctx->side_x});
+	init_step_and_dist(ctx->start_y, ctx->dy, ctx->delta_y,
+		(t_step_ctx){ctx->map_y, &ctx->step_y, &ctx->side_y});
+}
+
+static void	finalize_ray_hit(t_ray_ctx *ctx, t_ray_hit *result)
+{
+	if (ctx->side == 0)
+		ctx->wall_x = ctx->start_y + result->distance * ctx->dy / BLOCK;
+	else
+		ctx->wall_x = ctx->start_x + result->distance * ctx->dx / BLOCK;
+	ctx->wall_x -= floorf(ctx->wall_x);
+	result->wall_x = ctx->wall_x;
+	result->tex_num = get_texture_index(ctx->side, ctx->dx, ctx->dy);
+}
+
+t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx)
 {
 	t_ray_hit	result;
-	float		dx, dy;
-	int			map_x, map_y;
-	float		delta_x, delta_y;
-	int			step_x, step_y;
-	float		side_x, side_y;
-	int			side;
-	float		wall_x;
 
-	init_ray_direction(game, angle, &dx, &dy);
-	map_x = (int)(start_x / BLOCK);
-	map_y = (int)(start_y / BLOCK);
-	delta_x = fabsf(1.0f / dx);
-	delta_y = fabsf(1.0f / dy);
-	init_step_and_dist(start_x, dx, delta_x, map_x, &step_x, &side_x);
-	init_step_and_dist(start_y, dy, delta_y, map_y, &step_y, &side_y);
-	perform_dda(game, &map_x, &map_y, &side_x, &side_y,
-		delta_x, delta_y, &step_x, &step_y, &side);
-	if (side == 0)
-		result.distance = compute_distance(start_x, map_x, step_x, dx);
+	setup_ray_ctx(game, ctx);
+	perform_dda(game, (t_dda_ctx){
+		&ctx->map_x, &ctx->map_y, &ctx->side_x, &ctx->side_y,
+		ctx->delta_x, ctx->delta_y, &ctx->step_x, &ctx->step_y,
+		&ctx->side});
+	if (ctx->side == 0)
+		result.distance = compute_distance(ctx->start_x, ctx->map_x,
+				ctx->step_x, ctx->dx);
 	else
-		result.distance = compute_distance(start_y, map_y, step_y, dy);
-	result.side = side;
-	if (side == 0)
-		wall_x = start_y + result.distance * dy / BLOCK;
-	else
-		wall_x = start_x + result.distance * dx / BLOCK;
-	wall_x -= floorf(wall_x);
-	result.wall_x = wall_x;
-	result.tex_num = get_texture_index(side, dx, dy);
+		result.distance = compute_distance(ctx->start_y, ctx->map_y,
+				ctx->step_y, ctx->dy);
+	result.side = ctx->side;
+	finalize_ray_hit(ctx, &result);
 	return (result);
 }
 
@@ -162,7 +169,7 @@ static void	limit_wall_bounds(int *start, int *end)
 
 static int	compute_tex_x(t_ray_hit *hit, t_texture *tex, float angle)
 {
-	int tex_x;
+	int	tex_x;
 
 	tex_x = (int)(hit->wall_x * tex->width);
 	if ((hit->side == 0 && cosf(angle) > 0)
@@ -171,8 +178,7 @@ static int	compute_tex_x(t_ray_hit *hit, t_texture *tex, float angle)
 	return (tex_x);
 }
 
-static void	draw_vertical_line(t_game *game, t_texture *tex,
-		t_ray_hit *hit, int x, int wall_start, int wall_end, int tex_x)
+static void	draw_vertical_line(t_game *game, t_draw_ctx ctx)
 {
 	float	step;
 	float	tex_pos;
@@ -180,74 +186,83 @@ static void	draw_vertical_line(t_game *game, t_texture *tex,
 	int		tex_y;
 	int		color;
 
-	step = (float)tex->height / (wall_end - wall_start);
-	tex_pos = (wall_start - (HEIGHT - (wall_end - wall_start)) / 2) * step;
-	y = wall_start;
-	while (y < wall_end)
+	step = (float)ctx.tex->height / (ctx.wall_end - ctx.wall_start);
+	tex_pos = (ctx.wall_start - (HEIGHT - (ctx.wall_end - ctx.wall_start)) / 2)
+		* step;
+	y = ctx.wall_start;
+	while (y < ctx.wall_end)
 	{
-		tex_y = (int)tex_pos & (tex->height - 1);
+		tex_y = (int)tex_pos & (ctx.tex->height - 1);
 		tex_pos += step;
-		color = *(int *)(tex->data + tex_y * tex->size_line + tex_x
-				* (tex->bpp / 8));
-		if (hit->side == 1)
+		color = *(int *)(ctx.tex->data + tex_y * ctx.tex->size_line + ctx.tex_x
+				* (ctx.tex->bpp / 8));
+		if (ctx.hit->side == 1)
 			color = (color >> 1) & 0x7F7F7F;
-		put_pixel(game, x, y, color);
+		put_pixel(game, ctx.x, y, color);
 		y++;
 	}
 }
 
-void	cast_ray(t_game *game, t_player *player, float angle, int x)
+void	cast_ray(t_game *game, t_ray_ctx *ray, int x)
 {
-	t_ray_hit	hit;
-	t_texture	*tex;
-	float		wall_height;
-	int			wall_start;
-	int			wall_end;
-	int			tex_x;
+	t_cast_ctx	ctx;
 
-	hit = calculate_distance(game, player->x, player->y, angle);
-	if (hit.distance < 0.1f)
-		hit.distance = 0.1f;
-	wall_height = (BLOCK * HEIGHT) / (hit.distance * 2.0f);
-	if (wall_height > HEIGHT * 3)
-		wall_height = HEIGHT * 3;
-	wall_start = (HEIGHT - wall_height) / 2;
-	wall_end = wall_start + wall_height;
-	limit_wall_bounds(&wall_start, &wall_end);
-	tex = &game->textures[hit.tex_num];
-	tex_x = compute_tex_x(&hit, tex, angle);
-	draw_vertical_line(game, tex, &hit, x, wall_start, wall_end, tex_x);
+	ctx.ray = *ray;
+	ctx.hit = calculate_distance(game, &ctx.ray);
+	if (ctx.hit.distance < 0.1f)
+		ctx.hit.distance = 0.1f;
+	ctx.wall_height = (BLOCK * HEIGHT) / (ctx.hit.distance * 2.0f);
+	if (ctx.wall_height > HEIGHT * 3)
+		ctx.wall_height = HEIGHT * 3;
+	ctx.wall_start = (HEIGHT - ctx.wall_height) / 2;
+	ctx.wall_end = ctx.wall_start + ctx.wall_height;
+	limit_wall_bounds(&ctx.wall_start, &ctx.wall_end);
+	ctx.tex = &game->textures[ctx.hit.tex_num];
+	ctx.tex_x = compute_tex_x(&ctx.hit, ctx.tex, ctx.ray.angle);
+	draw_vertical_line(game, (t_draw_ctx){
+		.tex = ctx.tex, .hit = &ctx.hit, .x = x,
+		.wall_start = ctx.wall_start, .wall_end = ctx.wall_end,
+		.tex_x = ctx.tex_x});
 }
 
-static int	load_texture_image(t_game *game, int i, char *path, int *w, int *h)
+static int	load_texture_image(t_tex_ctx *ctx)
 {
-	game->textures[i].img = mlx_xpm_file_to_image(game->mlx, path, w, h);
-	if (!game->textures[i].img)
+	t_texture	*tex;
+
+	tex = &ctx->game->textures[ctx->index];
+	tex->img = mlx_xpm_file_to_image(ctx->game->mlx, ctx->path,
+			ctx->w, ctx->h);
+	if (!tex->img)
 		return (0);
-	game->textures[i].data = mlx_get_data_addr(game->textures[i].img,
-			&game->textures[i].bpp,
-			&game->textures[i].size_line,
-			&game->textures[i].endian);
-	game->textures[i].width = *w;
-	game->textures[i].height = *h;
+	tex->data = mlx_get_data_addr(tex->img,
+			&tex->bpp,
+			&tex->size_line,
+			&tex->endian);
+	tex->width = *ctx->w;
+	tex->height = *ctx->h;
 	return (1);
 }
 
 int	load_textures(t_game *game)
 {
-	int	w;
-	int	h;
+	int			w;
+	int			h;
+	t_tex_ctx	ctx;
 
 	if (!game->config.no_path || !game->config.so_path
 		|| !game->config.we_path || !game->config.ea_path)
 		return (0);
-	if (!load_texture_image(game, 0, game->config.no_path, &w, &h))
+	ctx = (t_tex_ctx){game, 0, game->config.no_path, &w, &h};
+	if (!load_texture_image(&ctx))
 		return (0);
-	if (!load_texture_image(game, 1, game->config.so_path, &w, &h))
+	ctx = (t_tex_ctx){game, 1, game->config.so_path, &w, &h};
+	if (!load_texture_image(&ctx))
 		return (0);
-	if (!load_texture_image(game, 2, game->config.we_path, &w, &h))
+	ctx = (t_tex_ctx){game, 2, game->config.we_path, &w, &h};
+	if (!load_texture_image(&ctx))
 		return (0);
-	if (!load_texture_image(game, 3, game->config.ea_path, &w, &h))
+	ctx = (t_tex_ctx){game, 3, game->config.ea_path, &w, &h};
+	if (!load_texture_image(&ctx))
 		return (0);
 	return (1);
 }
@@ -266,14 +281,18 @@ static void	init_raycast(t_game *game, t_player *player)
 
 static void	process_rays(t_game *game, t_player *player)
 {
-	float	angle;
-	int		i;
+	t_ray_ctx	ray;
+	float		angle;
+	int			i;
 
 	angle = game->start_angle;
+	ray.start_x = player->x;
+	ray.start_y = player->y;
 	i = 0;
 	while (i < WIDTH)
 	{
-		cast_ray(game, player, angle, i);
+		ray.angle = angle;
+		cast_ray(game, &ray, i);
 		angle += game->fraction;
 		i++;
 	}

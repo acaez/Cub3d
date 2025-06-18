@@ -195,6 +195,24 @@ typedef struct s_ray
 	float	height;
 }	t_ray;
 
+typedef struct s_ray_ctx {
+	float		start_x;
+	float		start_y;
+	float		angle;
+	float		dx;
+	float		dy;
+	int			map_x;
+	int			map_y;
+	float		delta_x;
+	float		delta_y;
+	int			step_x;
+	int			step_y;
+	float		side_x;
+	float		side_y;
+	int			side;
+	float		wall_x;
+}	t_ray_ctx;
+
 typedef struct s_square
 {
 	int	x;
@@ -210,6 +228,53 @@ typedef struct s_tile_ctx
 	int			start_x;
 	int			start_y;
 }	t_tile_ctx;
+
+typedef struct s_step_ctx {
+	int	map_pos;
+	int	*step;
+	float	*side_dist;
+}	t_step_ctx;
+
+typedef struct s_dda_ctx {
+	int	*map_x;
+	int	*map_y;
+	float	*side_x;
+	float	*side_y;
+	float	delta_x;
+	float	delta_y;
+	int	*step_x;
+	int	*step_y;
+	int	*side;
+}	t_dda_ctx;
+
+typedef struct s_draw_ctx {
+	t_texture	*tex;
+	t_ray_hit	*hit;
+	int			x;
+	int			wall_start;
+	int			wall_end;
+	int			tex_x;
+}	t_draw_ctx;
+
+typedef struct s_tex_ctx
+{
+	t_game	*game;
+	int		index;
+	char	*path;
+	int		*w;
+	int		*h;
+}	t_tex_ctx;
+
+typedef struct s_cast_ctx
+{
+	t_ray_hit	hit;
+	t_texture	*tex;
+	float		wall_height;
+	int			wall_start;
+	int			wall_end;
+	int			tex_x;
+	t_ray_ctx	ray;
+}	t_cast_ctx;
 
 /* ============================== GAME  =================================== */
 /* ------------------------------ exit.c ---------------------------------- */
@@ -259,7 +324,7 @@ void	draw_debug_map(t_game *game);
 
 /* ------------------------------ raycast.c ------------------------------- */
 void	put_pixel(t_game *game, int x, int y, int color);
-t_ray_hit	calculate_distance(t_game *game, float start_x, float start_y, float angle);
+t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx);
 int		raycast(t_game *game);
 int		load_textures(t_game *game);
 
