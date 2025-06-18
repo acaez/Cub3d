@@ -83,6 +83,7 @@ void	draw_scene(t_game *game)
 		draw_floor(game);
 		draw_sky(game);
 		raycast(game);
+		draw_crosshair(game);
 		if (game->config.map)
 			draw_minimap(game);
 	}
@@ -90,9 +91,12 @@ void	draw_scene(t_game *game)
 
 int	game_loop(t_game *game)
 {
-	move_player(&game->player);
+	if (!game->paused)
+		move_player(&game->player);
 	clear_image(game);
 	draw_scene(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	if (game->paused)
+		draw_pause_overlay(game);
 	return (0);
 }

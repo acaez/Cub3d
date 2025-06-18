@@ -25,7 +25,9 @@ SRC      = main.c \
 		   raycast/debug_mode.c \
 		   utils/debug_mode_utils.c \
 		   utils/debug_utils.c \
+		   utils/draw_utils.c \
 		   utils/init_utils.c \
+		   utils/keys_utils.c \
 		   utils/parse_utils.c \
 		   utils/parse_utils2.c \
 		   utils/parse_utils3.c \

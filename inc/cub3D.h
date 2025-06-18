@@ -44,12 +44,14 @@
 #  define S 115
 #  define D 100
 #  define ESC 65307
+#  define SPACE 32
 #  define LEFT 65361
 #  define RIGHT 65363
 #  define TAB 65289
 #  define KEY_PRESS_MASK    1
 #  define KEY_RELEASE_MASK  2
 #  define DESTROY_MASK      131072
+
 # elif MACOS
 #  define W 13
 #  define A 0
@@ -59,6 +61,7 @@
 #  define LEFT 123
 #  define RIGHT 124
 #  define TAB 48
+#  define SPACE 49
 #  define KEY_PRESS_MASK    0
 #  define KEY_RELEASE_MASK  0
 #  define DESTROY_MASK      0
@@ -78,6 +81,15 @@
 	"Map Validation : Map must contain exactly one player position."
 # define ERR_MAP_NOT_CLOSED \
 	"Map Validation : Map is not properly closed by walls."
+
+#define PAUSE_MSG1 "GAME PAUSED"
+#define PAUSE_MSG2 "PRESS ESC TO QUIT, SPACE TO RESUME"
+#define PAUSE_TXT1_X 605
+#define PAUSE_TXT1_Y 354
+#define PAUSE_TXT2_X 530
+#define PAUSE_TXT2_Y 374
+#define PAUSE_RECT_W 480
+#define PAUSE_RECT_H 48
 
 typedef struct s_trigo
 {
@@ -167,9 +179,10 @@ typedef struct s_game
 	t_minimap	minimap;
 	t_trigo		trigo;
 	clock_t		last_frame;
-	t_texture	textures[4]; // NO, SO, WE, EA
-	float		fraction;    // Précalculé pour le raycasting
-	float		start_angle; // Précalculé pour le raycasting
+	t_texture	textures[4];
+	float		fraction;
+	float		start_angle;
+	bool	paused;
 }	t_game;
 
 typedef struct s_debug_map
@@ -313,6 +326,8 @@ bool	validate_config(t_config *cfg, char **err);
 /* ------------------------------ keys.c ---------------------------------- */
 int		key_press(int keycode, t_game *game);
 int		key_release(int keycode, t_game *game);
+int		mouse_move(int x, int y, void *param);
+void	draw_crosshair(t_game *game);
 
 /* ------------------------------ move.c ---------------------------------- */
 void	move_player(t_player *player);
@@ -323,7 +338,6 @@ void	draw_debug_rays(t_game *game, t_player *player);
 void	draw_debug_map(t_game *game);
 
 /* ------------------------------ raycast.c ------------------------------- */
-void	put_pixel(t_game *game, int x, int y, int color);
 t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx);
 int		raycast(t_game *game);
 int		load_textures(t_game *game);
@@ -352,9 +366,9 @@ void	print_config(const t_config *cfg);
 void	print_map(char **map);
 
 /* ------------------------------ draw_utils.c ---------------------------- */
-void	setup_dir(t_game *game, char direction);
-void	setup_pos(t_game *game);
-
+void	draw_pause_overlay(t_game *game);
+void	put_pixel(t_game *game, int x, int y, int color);
+void	draw_crosshair(t_game *game);
 /* ------------------------------ pars_utils.c ---------------------------- */
 char	*ft_strtrim_free(char *str, const char *set);
 char	**ft_realloc_tab(char **old, int new_size);
@@ -383,17 +397,19 @@ int		check_collision(t_config *config, float x, float y);
 /* ----------------------------- raycast_utils2.c ------------------------- */
 float	distance(float dx, float dy);
 float	fixed_dist(t_ray *r);
-
 /* ------------------------------ valide_utils.c -------------------------- */
 bool	is_inside_map(char **map, int y, int x);
 bool	is_open_char(char c);
 bool	line_has_only_valid(char *s);
-
 /* ------------------------------ init_utils.c ---------------------------- */
 void	init_config(t_config *cfg);
 void	init_key(t_game *game);
 void	setup_dir(t_game *game, char direction);
 void	setup_pos(t_game *game);
 void	init_player(t_player *player, t_game *game);
+/* ------------------------------ key_utils.c ----------------------------- */
+bool	handle_pause_keys(int keycode, t_game *game);
+bool	handle_debug_keys(int keycode, t_game *game);
+void	movement_keys(int keycode, t_game *game);
 
 #endif
