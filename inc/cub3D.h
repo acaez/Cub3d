@@ -327,6 +327,16 @@ void	put_pixel(t_game *game, int x, int y, int color);
 t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx);
 int		raycast(t_game *game);
 int		load_textures(t_game *game);
+/* ----------------------------- cast_ray.c ------------------------------- */
+void	cast_ray(t_game *game, t_ray_ctx *ray, int x);
+/* ----------------------------- ray_math.c ------------------------------- */
+void	setup_ray_ctx(t_game *game, t_ray_ctx *ctx);
+int		get_texture_index(int side, float dx, float dy);
+float	compute_distance(float start, int map_pos, int step, float dir);
+/* ----------------------------- ray_hit.c -------------------------------- */
+t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx);
+/* -------------------------- texture_loader------------------------------- */
+int	load_textures(t_game *game);
 
 /* ============================== UTILITY ================================= */
 /* ------------------------------ debug_mode_utils.c ---------------------- */

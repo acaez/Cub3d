@@ -18,6 +18,10 @@ SRC      = main.c \
 		   player/keys.c \
 		   player/move.c \
 		   raycast/raycast.c \
+		   raycast/cast_ray.c \
+		   raycast/ray_math.c \
+		   raycast/ray_hit.c \
+		   raycast/texture_loader.c \
 		   raycast/debug_mode.c \
 		   utils/debug_mode_utils.c \
 		   utils/debug_utils.c \
