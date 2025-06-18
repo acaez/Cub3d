@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,41 +12,42 @@
 
 #include "../../inc/cub3D.h"
 
-static void	exit_game(t_game *game, int exit_code)
+void	free_map(char **map)
 {
-	if (game)
+	int	i;
+
+	if (!map)
+		return ;
+	i = 0;
+	while (map[i])
 	{
-		if (game->img)
-			mlx_destroy_image(game->mlx, game->img);
-		if (game->win)
-			mlx_destroy_window(game->mlx, game->win);
-		//if (game->mlx)
-		//	mlx_destroy_display(game->mlx);
-		if (game->mlx)
-			free(game->mlx);
-		free_config(&game->config);
+		free(map[i]);
+		i++;
 	}
-	exit(exit_code);
+	free(map);
 }
 
-void	exit_error(t_game *game, char *msg)
+void	free_config(t_config *cfg)
 {
-	ft_putstr_fd("Error\n", 2);
-	if (msg)
+	if (cfg->no_path)
+		free(cfg->no_path);
+	if (cfg->so_path)
+		free(cfg->so_path);
+	if (cfg->we_path)
+		free(cfg->we_path);
+	if (cfg->ea_path)
+		free(cfg->ea_path);
+	if (cfg->map)
 	{
-		ft_putendl_fd(msg, 2);
-		free(msg);
+		free_map(cfg->map);
+		cfg->map = NULL;
 	}
-	exit_game(game, 1);
 }
 
-int	close_window(t_game *game)
+void	free_trigo(t_trigo *trigo)
 {
-	if (game->win)
-	{
-		mlx_destroy_window(game->mlx, game->win);
-		game->win = NULL;
-	}
-	exit_game(game, 0);
-	return (0);
+	if (trigo->cos_table)
+		free(trigo->cos_table);
+	if (trigo->sin_table)
+		free(trigo->sin_table);
 }

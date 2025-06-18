@@ -8,6 +8,7 @@ MLX_DIR  = mlx
 
 SRC      = main.c \
 		   game/exit.c \
+		   game/free.c \
 		   game/game.c \
 		   game/init.c \
 		   parsing/get_map.c \
@@ -26,6 +27,7 @@ SRC      = main.c \
 		   utils/parse_utils3.c \
 		   utils/map_utils.c \
 		   utils/raycast_utils.c \
+		   utils/raycast_utils2.c \
 		   utils/valid_utils.c \
 
 OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))

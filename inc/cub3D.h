@@ -213,12 +213,12 @@ typedef struct s_tile_ctx
 
 /* ============================== GAME  =================================== */
 /* ------------------------------ exit.c ---------------------------------- */
+void	exit_error(t_game *game, char *msg);
+int		close_window(t_game *game);
+/* ------------------------------ free.c ---------------------------------- */
 void	free_map(char **map);
 void	free_config(t_config *cfg);
 void	free_trigo(t_trigo *trigo);
-void	exit_error(t_game *game, char *msg);
-int		close_window(t_game *game);
-
 /* ------------------------------ game.c ---------------------------------- */
 void	clear_image(t_game *game);
 void	draw_scene(t_game *game);
@@ -286,26 +286,28 @@ char	**ft_realloc_tab(char **old, int new_size);
 bool	is_map_line(char *line);
 bool	parse_color(char *line, int *color);
 bool	set_texture(t_config *cfg, const char *id, const char *path);
-/* ------------------------------ pars_utils2.c ---------------------------- */
+/* ------------------------------ pars_utils2.c --------------------------- */
 void	copy_normalized_spaces(const char *src, char *dst);
 char	*normalize_spaces(char *str);
 bool	is_empty_line(const char *line);
 char	*remove_trailing_newline(char *line);
-/* ------------------------------ pars_utils3.c ---------------------------- */
+/* ------------------------------ pars_utils3.c --------------------------- */
 bool	parse_line(t_config *cfg, char *line);
 bool	add_line_to_map(t_config *cfg, char *line, int *sz, int *cap);
 bool	read_map_lines(t_config *cfg, int fd, char *line);
 bool	handle_trailing_lines(int fd, char **err);
-/* ------------------------------ map_utils.c ---------------------------- */
+/* ------------------------------ map_utils.c ----------------------------- */
 void	draw_filled_square(t_game *game, t_square sq);
 void	draw_tile_line(t_tile_ctx *ctx, int y, int end_x);
 void	init_minimap(t_game *game);
+
 /* ------------------------------ raycast_utils.c ------------------------- */
-float	distance(float dx, float dy);
-float	fixed_dist(t_ray *r);
 void	get_trigo_value(t_trigo *trigo, float angle, float *cos_val, float *sin_val);
 void	limit_fps(t_game *game);
 int		check_collision(t_config *config, float x, float y);
+/* ----------------------------- raycast_utils2.c ------------------------- */
+float	distance(float dx, float dy);
+float	fixed_dist(t_ray *r);
 
 /* ------------------------------ valide_utils.c -------------------------- */
 bool	is_inside_map(char **map, int y, int x);

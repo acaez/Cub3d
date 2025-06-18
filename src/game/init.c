@@ -37,10 +37,8 @@ static void	init_trigo(t_trigo *trigo)
 	trigo->table_size = 3600;
 	trigo->cos_table = malloc(sizeof(float) * 3600);
 	trigo->sin_table = malloc(sizeof(float) * 3600);
-	
 	if (!trigo->cos_table || !trigo->sin_table)
 		return ;
-		
 	i = 0;
 	while (i < 3600)
 	{

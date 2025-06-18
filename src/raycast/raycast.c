@@ -25,255 +25,251 @@ void	put_pixel(t_game *game, int x, int y, int color)
 	}
 }
 
-t_ray_hit	calculate_distance(t_game *game, float start_x, float start_y, float angle)
+static void	init_ray_direction(t_game *game, float angle, float *dx, float *dy)
 {
-	float		dx, dy;
-	int			map_x, map_y;
-	float		delta_dist_x, delta_dist_y;
-	int			step_x, step_y;
-	float		side_dist_x, side_dist_y;
-	int			hit, side;
-	t_ray_hit	result;
-	
-	// Utiliser les tables trigo précalculées si disponibles
 	if (game->trigo.cos_table)
-		get_trigo_value(&game->trigo, angle, &dx, &dy);
+		get_trigo_value(&game->trigo, angle, dx, dy);
 	else
 	{
-		dx = cosf(angle);
-		dy = sinf(angle);
+		*dx = cosf(angle);
+		*dy = sinf(angle);
 	}
-	
-	// Position actuelle en coordonnées de grille
-	map_x = (int)(start_x / BLOCK);
-	map_y = (int)(start_y / BLOCK);
-	
-	// Distance à parcourir pour traverser une case
-	delta_dist_x = fabsf(1.0f / dx);
-	delta_dist_y = fabsf(1.0f / dy);
-	
-	// Direction et distance jusqu'au prochain bord de case
-	if (dx < 0)
+}
+
+static void	init_step_and_dist(float start, float dir, float delta,
+	int map_pos, int *step, float *side_dist)
+{
+	if (dir < 0)
 	{
-		step_x = -1;
-		side_dist_x = (start_x / BLOCK - map_x) * delta_dist_x;
+		*step = -1;
+		*side_dist = (start / BLOCK - map_pos) * delta;
 	}
 	else
 	{
-		step_x = 1;
-		side_dist_x = (map_x + 1.0f - start_x / BLOCK) * delta_dist_x;
+		*step = 1;
+		*side_dist = (map_pos + 1.0f - start / BLOCK) * delta;
 	}
-	
-	if (dy < 0)
-	{
-		step_y = -1;
-		side_dist_y = (start_y / BLOCK - map_y) * delta_dist_y;
-	}
-	else
-	{
-		step_y = 1;
-		side_dist_y = (map_y + 1.0f - start_y / BLOCK) * delta_dist_y;
-	}
-	
-	// Algorithme DDA
+}
+
+static int	is_blocking_cell(t_game *game, int mx, int my)
+{
+	if (mx < 0 || my < 0)
+		return (1);
+	if (my >= game->config.map_height)
+		return (1);
+	if (mx >= (int)ft_strlen(game->config.map[my]))
+		return (1);
+	if (game->config.map[my][mx] == '1')
+		return (1);
+	return (0);
+}
+
+static void	perform_dda(t_game *game, int *map_x, int *map_y,
+	float *side_x, float *side_y, float delta_x, float delta_y,
+	int *step_x, int *step_y, int *side)
+{
+	int	hit;
+
 	hit = 0;
-	side = 0;
-	
-	while (hit == 0)
+	while (!hit)
 	{
-		// Avancer dans la direction la plus proche
-		if (side_dist_x < side_dist_y)
+		if (*side_x < *side_y)
 		{
-			side_dist_x += delta_dist_x;
-			map_x += step_x;
-			side = 0;
+			*side_x += delta_x;
+			*map_x += *step_x;
+			*side = 0;
 		}
 		else
 		{
-			side_dist_y += delta_dist_y;
-			map_y += step_y;
-			side = 1;
+			*side_y += delta_y;
+			*map_y += *step_y;
+			*side = 1;
 		}
-		
-		// Vérifier si on a touché un mur
-		if (map_x < 0 || map_y < 0 || 
-			map_y >= game->config.map_height ||
-			map_x >= (int)ft_strlen(game->config.map[map_y]) ||
-			game->config.map[map_y][map_x] == '1')
-		{
-			hit = 1;
-		}
+		hit = is_blocking_cell(game, *map_x, *map_y);
 	}
-	
-	// Calculer la distance perpendiculaire
-	if (side == 0)
-		result.distance = (map_x - start_x / BLOCK + (1 - step_x) / 2) / dx;
-	else
-		result.distance = (map_y - start_y / BLOCK + (1 - step_y) / 2) / dy;
-	
-	result.distance *= BLOCK;
-	result.side = side;
-	
-	// Calculer la coordonnée exacte de l'impact
-	float wall_x;
-	if (side == 0)
-		wall_x = start_y + result.distance * dy / BLOCK;
-	else
-		wall_x = start_x + result.distance * dx / BLOCK;
-	wall_x -= floor(wall_x);
-	result.wall_x = wall_x;
-	
-	// Déterminer la texture à utiliser en fonction de la direction
+}
+
+static float	compute_distance(float start, int map_pos, int step, float dir)
+{
+	float	result;
+
+	result = map_pos - start / BLOCK;
+	result += (1 - step) / 2.0f;
+	result /= dir;
+	return (result * BLOCK);
+}
+
+static int	get_texture_index(int side, float dx, float dy)
+{
 	if (side == 0)
 	{
 		if (dx < 0)
-			result.tex_num = 3; // WEST
+			return (3);
 		else
-			result.tex_num = 2; // EAST
+			return (2);
 	}
 	else
 	{
 		if (dy < 0)
-			result.tex_num = 0; // NORTH
+			return (0);
 		else
-			result.tex_num = 1; // SOUTH
+			return (1);
 	}
-	
-	return result;
 }
 
-static void	cast_ray(t_game *game, t_player *player, float angle, int x)
+t_ray_hit	calculate_distance(t_game *game, float start_x, float start_y, float angle)
 {
-	t_ray_hit	hit;
-	float		wall_height;
-	int			wall_start, wall_end;
-	int			y;
-	int			tex_x, tex_y;
-	int			color;
-	float		step;
-	float		tex_pos;
-	t_texture	*tex;
-	
-	// Calculer la distance et informations sur le mur touché
-	hit = calculate_distance(game, player->x, player->y, angle);
-	
-	// Éviter division par zéro
-	if (hit.distance < 0.1f)
-		hit.distance = 0.1f;
-	
-	// Calculer la hauteur du mur en pixels
-	wall_height = (BLOCK * HEIGHT) / (hit.distance * 2.0f);
-	
-	// Limiter la hauteur pour éviter les débordements
-	if (wall_height > HEIGHT * 3)
-		wall_height = HEIGHT * 3;
-	
-	// Calculer les limites du mur sur l'écran
-	wall_start = (HEIGHT - wall_height) / 2;
-	wall_end = wall_start + wall_height;
-	
-	// S'assurer que les limites sont dans l'écran
-	if (wall_start < 0) wall_start = 0;
-	if (wall_end > HEIGHT) wall_end = HEIGHT;
-	
-	// Calculer la position X dans la texture
-	tex = &game->textures[hit.tex_num];
-	tex_x = (int)(hit.wall_x * tex->width);
-	
-	// Inverser la coordonnée X pour certaines faces (pour un rendu cohérent)
-	if ((hit.side == 0 && cosf(angle) > 0) || (hit.side == 1 && sinf(angle) < 0))
+	t_ray_hit	result;
+	float		dx, dy;
+	int			map_x, map_y;
+	float		delta_x, delta_y;
+	int			step_x, step_y;
+	float		side_x, side_y;
+	int			side;
+	float		wall_x;
+
+	init_ray_direction(game, angle, &dx, &dy);
+	map_x = (int)(start_x / BLOCK);
+	map_y = (int)(start_y / BLOCK);
+	delta_x = fabsf(1.0f / dx);
+	delta_y = fabsf(1.0f / dy);
+	init_step_and_dist(start_x, dx, delta_x, map_x, &step_x, &side_x);
+	init_step_and_dist(start_y, dy, delta_y, map_y, &step_y, &side_y);
+	perform_dda(game, &map_x, &map_y, &side_x, &side_y,
+		delta_x, delta_y, &step_x, &step_y, &side);
+	if (side == 0)
+		result.distance = compute_distance(start_x, map_x, step_x, dx);
+	else
+		result.distance = compute_distance(start_y, map_y, step_y, dy);
+	result.side = side;
+	if (side == 0)
+		wall_x = start_y + result.distance * dy / BLOCK;
+	else
+		wall_x = start_x + result.distance * dx / BLOCK;
+	wall_x -= floorf(wall_x);
+	result.wall_x = wall_x;
+	result.tex_num = get_texture_index(side, dx, dy);
+	return (result);
+}
+
+static void	limit_wall_bounds(int *start, int *end)
+{
+	if (*start < 0)
+		*start = 0;
+	if (*end > HEIGHT)
+		*end = HEIGHT;
+}
+
+static int	compute_tex_x(t_ray_hit *hit, t_texture *tex, float angle)
+{
+	int tex_x;
+
+	tex_x = (int)(hit->wall_x * tex->width);
+	if ((hit->side == 0 && cosf(angle) > 0)
+		|| (hit->side == 1 && sinf(angle) < 0))
 		tex_x = tex->width - tex_x - 1;
-	
-	// Calculer le pas et la position initiale pour parcourir la texture
-	step = (float)tex->height / wall_height;
-	tex_pos = (wall_start - (HEIGHT - wall_height) / 2) * step;
-	
-	// Dessiner la colonne de pixels du mur avec texture
+	return (tex_x);
+}
+
+static void	draw_vertical_line(t_game *game, t_texture *tex,
+		t_ray_hit *hit, int x, int wall_start, int wall_end, int tex_x)
+{
+	float	step;
+	float	tex_pos;
+	int		y;
+	int		tex_y;
+	int		color;
+
+	step = (float)tex->height / (wall_end - wall_start);
+	tex_pos = (wall_start - (HEIGHT - (wall_end - wall_start)) / 2) * step;
 	y = wall_start;
 	while (y < wall_end)
 	{
-		// Calculer la coordonnée Y de la texture
 		tex_y = (int)tex_pos & (tex->height - 1);
 		tex_pos += step;
-		
-		// Récupérer la couleur du pixel dans la texture
-		color = *(int*)(tex->data + tex_y * tex->size_line + tex_x * (tex->bpp / 8));
-		
-		// Assombrir légèrement les murs Y (effet d'éclairage)
-		if (hit.side == 1)
-			color = (color >> 1) & 0x7F7F7F; // Diviser par 2
-		
-		// Dessiner le pixel
+		color = *(int *)(tex->data + tex_y * tex->size_line + tex_x
+				* (tex->bpp / 8));
+		if (hit->side == 1)
+			color = (color >> 1) & 0x7F7F7F;
 		put_pixel(game, x, y, color);
 		y++;
 	}
 }
 
-int	load_textures(t_game *game)
+void	cast_ray(t_game *game, t_player *player, float angle, int x)
 {
-	int	width;
-	int	height;
-	int	i;
+	t_ray_hit	hit;
+	t_texture	*tex;
+	float		wall_height;
+	int			wall_start;
+	int			wall_end;
+	int			tex_x;
 
-	if (!game->config.no_path || !game->config.so_path || 
-		!game->config.we_path || !game->config.ea_path)
+	hit = calculate_distance(game, player->x, player->y, angle);
+	if (hit.distance < 0.1f)
+		hit.distance = 0.1f;
+	wall_height = (BLOCK * HEIGHT) / (hit.distance * 2.0f);
+	if (wall_height > HEIGHT * 3)
+		wall_height = HEIGHT * 3;
+	wall_start = (HEIGHT - wall_height) / 2;
+	wall_end = wall_start + wall_height;
+	limit_wall_bounds(&wall_start, &wall_end);
+	tex = &game->textures[hit.tex_num];
+	tex_x = compute_tex_x(&hit, tex, angle);
+	draw_vertical_line(game, tex, &hit, x, wall_start, wall_end, tex_x);
+}
+
+static int	load_texture_image(t_game *game, int i, char *path, int *w, int *h)
+{
+	game->textures[i].img = mlx_xpm_file_to_image(game->mlx, path, w, h);
+	if (!game->textures[i].img)
 		return (0);
-	game->textures[0].img = mlx_xpm_file_to_image(game->mlx, 
-		game->config.no_path, &width, &height);
-	game->textures[1].img = mlx_xpm_file_to_image(game->mlx, 
-		game->config.so_path, &width, &height);
-	game->textures[2].img = mlx_xpm_file_to_image(game->mlx, 
-		game->config.we_path, &width, &height);
-	game->textures[3].img = mlx_xpm_file_to_image(game->mlx, 
-		game->config.ea_path, &width, &height);
-	
-	// Vérifier que les images ont été chargées et obtenir leurs données
-	i = 0;
-	while (i < 4)
-	{
-		if (!game->textures[i].img)
-			return (0);
-		game->textures[i].data = mlx_get_data_addr(game->textures[i].img, 
-			&game->textures[i].bpp, &game->textures[i].size_line, 
+	game->textures[i].data = mlx_get_data_addr(game->textures[i].img,
+			&game->textures[i].bpp,
+			&game->textures[i].size_line,
 			&game->textures[i].endian);
-		game->textures[i].width = width;
-		game->textures[i].height = height;
-		i++;
-	}
+	game->textures[i].width = *w;
+	game->textures[i].height = *h;
 	return (1);
 }
 
-int	raycast(t_game *game)
+int	load_textures(t_game *game)
 {
-	t_player	*player;
-	float		angle;
-	int			i;
+	int	w;
+	int	h;
+
+	if (!game->config.no_path || !game->config.so_path
+		|| !game->config.we_path || !game->config.ea_path)
+		return (0);
+	if (!load_texture_image(game, 0, game->config.no_path, &w, &h))
+		return (0);
+	if (!load_texture_image(game, 1, game->config.so_path, &w, &h))
+		return (0);
+	if (!load_texture_image(game, 2, game->config.we_path, &w, &h))
+		return (0);
+	if (!load_texture_image(game, 3, game->config.ea_path, &w, &h))
+		return (0);
+	return (1);
+}
+
+static void	init_raycast(t_game *game, t_player *player)
+{
 	static int	textures_loaded = 0;
 
-	player = &game->player;
-	limit_fps(game);
-	
-	// Chargement des textures lors du premier appel
 	if (!textures_loaded)
 	{
 		textures_loaded = load_textures(game);
-		// Précalculer les valeurs constantes
 		game->fraction = PI / 3 / WIDTH;
-		game->start_angle = player->angle - PI / 6;
 	}
-	
-	if (game->debug_mode)
-	{
-		draw_debug_map(game);
-		draw_debug_rays(game, player);
-		return (0);
-	}
-
-	// Utiliser les valeurs précalculées
 	game->start_angle = player->angle - PI / 6;
+}
+
+static void	process_rays(t_game *game, t_player *player)
+{
+	float	angle;
+	int		i;
+
 	angle = game->start_angle;
-	
-	// Boucle standard pour le raycasting
 	i = 0;
 	while (i < WIDTH)
 	{
@@ -281,6 +277,21 @@ int	raycast(t_game *game)
 		angle += game->fraction;
 		i++;
 	}
-	
+}
+
+int	raycast(t_game *game)
+{
+	t_player	*player;
+
+	player = &game->player;
+	limit_fps(game);
+	init_raycast(game, player);
+	if (game->debug_mode)
+	{
+		draw_debug_map(game);
+		draw_debug_rays(game, player);
+		return (0);
+	}
+	process_rays(game, player);
 	return (0);
 }
