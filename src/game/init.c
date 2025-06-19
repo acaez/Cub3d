@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:53:48 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:38:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 16:11:04 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,17 @@ static void	init_mlx(t_game *game)
 {
 	game->mlx = mlx_init();
 	if (!game->mlx)
-		exit_error(game, "mlx_init() failed");
+		exit_error(game, ft_strdup("mlx_init() failed"));
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
 	if (!game->win)
-		exit_error(game, "mlx_new_window() failed");
+		exit_error(game, ft_strdup("mlx_new_window() failed"));
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	if (!game->img)
-		exit_error(game, "mlx_new_image() failed");
+		exit_error(game, ft_strdup("mlx_new_image() failed"));
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
 			&game->endian);
 	if (!game->data)
-		exit_error(game, "mlx_get_data_addr() failed");
+		exit_error(game, ft_strdup("mlx_get_data_addr() failed"));
 }
 
 static void	init_trigo(t_trigo *trigo)
@@ -78,7 +78,7 @@ static void	load_game(t_game *game, char *map_path, int debug_mode)
 static void	parse_args(int argc, char **argv, int *map_idx, int *debug)
 {
 	if (argc < 2 || argc > 3)
-		exit_error(NULL, "Usage: ./cub3D <map.cub> [--debug]");
+		exit_error(NULL, ft_strdup("Usage: ./cub3D <map.cub> [--debug]"));
 	*debug = 0;
 	*map_idx = -1;
 	if (argc == 2)
@@ -97,7 +97,7 @@ static void	parse_args(int argc, char **argv, int *map_idx, int *debug)
 		*map_idx = 1;
 	}
 	else
-		exit_error(NULL, "Usage: ./cub3D <map.cub> [--debug]");
+		exit_error(NULL, ft_strdup("Usage: ./cub3D <map.cub> [--debug]"));
 }
 
 void	init_game(t_game *game, int argc, char **argv)

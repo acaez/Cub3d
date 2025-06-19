@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 13:07:32 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 16:51:35 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 16:30:39 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ void	init_key(t_game *game)
 	mlx_hook(game->win, 2, KEY_PRESS_MASK, key_press, game);
 	mlx_hook(game->win, 3, KEY_RELEASE_MASK, key_release, game);
 	mlx_hook(game->win, 17, DESTROY_MASK, close_window, game);
-	mlx_mouse_hide();
-	mlx_mouse_move(game->win, WIDTH / 2, HEIGHT / 2);
+	mlx_mouse_hide(game->mlx, game->win);
+	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
 	mlx_hook(game->win, 6, (1L << 6), mouse_move, game);
 }
 

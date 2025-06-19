@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 17:18:33 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:26:15 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int	raycast(t_game *game)
 	t_player	*player;
 
 	player = &game->player;
-	limit_fps(game);
 	init_raycast(game, player);
 	if (game->debug_mode)
 	{

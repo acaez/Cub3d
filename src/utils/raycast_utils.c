@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 15:59:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 16:53:30 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:26:04 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,6 @@ void	get_trigo_value(t_trigo *trigo, float angle, float *cos_val,
 		index = trigo->table_size - 1;
 	*cos_val = trigo->cos_table[index];
 	*sin_val = trigo->sin_table[index];
-}
-
-void	limit_fps(t_game *game)
-{
-	clock_t		current_time;
-	long		elapsed_us;
-	long		sleep_time;
-
-	current_time = clock();
-	elapsed_us = ((current_time - game->last_frame) * 1000000) / CLOCKS_PER_SEC;
-	if (elapsed_us < (1000000 / 60))
-	{
-		sleep_time = (1000000 / 60) - elapsed_us;
-		usleep(sleep_time);
-	}
-	game->last_frame = clock();
 }
 
 static int	is_blocked_at(t_config *config, float x, float y)

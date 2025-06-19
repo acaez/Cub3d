@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:11:50 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 15:10:25 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 16:25:38 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,11 @@ bool	parse_cub_file(t_config *cfg, char *path, char **err)
 	}
 	if (!parse_file_lines(cfg, fd, err))
 	{
+		gnl_clear(fd);
 		close(fd);
 		return (false);
 	}
+	gnl_clear(fd);
 	close(fd);
 	return (true);
 }

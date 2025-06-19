@@ -1,14 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 16:34:17 by matsauva          #+#    #+#             */
+/*   Updated: 2025/06/19 16:49:18 by matsauva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/gnl.h"
 
-static char	*ft_free(char **ptr)
-{
-	if (ptr && *ptr)
-	{
-		free(*ptr);
-		*ptr = NULL;
-	}
-	return (NULL);
-}
+static char	*g_stash[FD_MAX] = {NULL};
 
 static char	*fill_line(int fd, char *left)
 {
@@ -74,23 +78,27 @@ static char	*save_remainder(char *buffer)
 
 char	*get_next_line(int fd)
 {
-	static char *stash[FD_MAX] = {NULL};
-	char *line;
+	char	*line;
 
-	if (fd < 0 || fd >= FD_MAX || BUFFER_SIZE <= 0 || BUFFER_SIZE >= INT_MAX)
+	if (fd < 0 || fd >= FD_MAX || BUFFER_SIZE <= 0
+		|| BUFFER_SIZE >= INT_MAX)
 		return (NULL);
-
-	stash[fd] = fill_line(fd, stash[fd]);
-	if (!stash[fd])
+	g_stash[fd] = fill_line(fd, g_stash[fd]);
+	if (!g_stash[fd])
 		return (NULL);
-
-	line = extract_line(stash[fd]);
+	line = extract_line(g_stash[fd]);
 	if (!line)
 	{
-		ft_free(&stash[fd]);
+		ft_free(&g_stash[fd]);
 		return (NULL);
 	}
-
-	stash[fd] = save_remainder(stash[fd]);
+	g_stash[fd] = save_remainder(g_stash[fd]);
 	return (line);
+}
+
+void	gnl_clear(int fd)
+{
+	if (fd < 0 || fd >= FD_MAX)
+		return ;
+	ft_free(&g_stash[fd]);
 }

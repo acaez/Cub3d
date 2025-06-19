@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 14:40:52 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 14:40:59 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 16:30:25 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	mouse_move(int x, int y, void *param)
 			game->player.angle += 2 * PI;
 		else if (game->player.angle > 2 * PI)
 			game->player.angle -= 2 * PI;
-		mlx_mouse_move(game->win, WIDTH / 2, HEIGHT / 2);
+		mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
 	}
 	return (0);
 }

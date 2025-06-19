@@ -13,5 +13,7 @@
 # endif
 
 char	*get_next_line(int fd);
+void	gnl_clear(int fd);
+char	*ft_free(char **ptr);
 
 #endif

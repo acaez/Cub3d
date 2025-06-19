@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:50:08 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 14:39:06 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/19 16:07:40 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ static void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_image(game->mlx, game->img);
 		if (game->win)
 			mlx_destroy_window(game->mlx, game->win);
-		//if (game->mlx)
-		//	mlx_destroy_display(game->mlx);
+		if (game->mlx)
+			mlx_destroy_display(game->mlx);
 		if (game->mlx)
 			free(game->mlx);
 		free_config(&game->config);
+		free_trigo(&game->trigo);
 	}
 	exit(exit_code);
 }
@@ -42,6 +43,7 @@ void	exit_error(t_game *game, char *msg)
 
 int	close_window(t_game *game)
 {
+	mlx_mouse_show(game->mlx, game->win);
 	if (game->win)
 	{
 		mlx_destroy_window(game->mlx, game->win);
