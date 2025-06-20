@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/20 12:51:00 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/20 15:14:20 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@
 # define PI        3.14159265359
 # define ZONE_WIDTH 32
 # define ZONE_HEIGHT 16
+# define MINIMAP_W_RATIO 0.2
+# define MINIMAP_H_RATIO 0.2
 # ifdef LINUX
 #  define W 119
 #  define A 97
