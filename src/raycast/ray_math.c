@@ -68,6 +68,9 @@ int	get_texture_index(int side, float dx, float dy)
 
 void	setup_ray_ctx(t_game *game, t_ray_ctx *ctx)
 {
+	t_step_ctx	step_ctx_x;
+	t_step_ctx	step_ctx_y;
+
 	init_ray_direction(game, ctx->angle, &ctx->dx, &ctx->dy);
 	ctx->map_x = (int)(ctx->start_x / BLOCK);
 	ctx->map_y = (int)(ctx->start_y / BLOCK);

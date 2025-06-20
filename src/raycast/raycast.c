@@ -12,7 +12,7 @@
 
 #include "../../inc/cub3D.h"
 
-static void	init_raycast(t_game *game, t_player *player)
+static int	init_raycast(t_game *game, t_player *player)
 {
 	static int	textures_loaded = 0;
 
@@ -26,6 +26,7 @@ static void	init_raycast(t_game *game, t_player *player)
 		player->angle += 2 * PI;
 	while (player->angle >= 2 * PI)
 		player->angle -= 2 * PI;
+	return (0);
 }
 
 static void	process_rays(t_game *game, t_player *player)
@@ -57,6 +58,8 @@ int	raycast(t_game *game)
 
 	player = &game->player;
 	init_raycast(game, player);
+	if (init_raycast(game, player))
+		exit_error(game, ft_strdup("fail to load xpm"));
 	if (game->debug_mode)
 	{
 		draw_debug_map(game);

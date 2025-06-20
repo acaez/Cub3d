@@ -64,14 +64,16 @@ void	cast_ray(t_game *game, t_ray_ctx *ray, int x)
 {
 	t_cast_ctx	ctx;
 	t_draw_ctx	draw_ctx;
+	float		angle_diff;
+	float		corr_dist;
 
 	ctx.ray = *ray;
 	ctx.hit = calculate_distance(game, &ctx.ray);
 	if (ctx.hit.distance < 0.1f)
 		ctx.hit.distance = 0.1f;
 	angle_diff = ctx.ray.angle - game->player.angle;
-	corrected_distance = ctx.hit.distance * cosf(angle_diff);
-	ctx.wall_height = (BLOCK * HEIGHT) / (ctx.hit.distance * 2.0f);
+	corr_dist = ctx.hit.distance * cosf(angle_diff);
+	ctx.wall_height = (BLOCK * HEIGHT) / (corr_dist * 2.0f);
 	if (ctx.wall_height > HEIGHT * 3)
 		ctx.wall_height = HEIGHT * 3;
 	ctx.wall_start = (HEIGHT - ctx.wall_height) / 2;

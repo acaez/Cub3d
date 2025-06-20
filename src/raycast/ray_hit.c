@@ -66,6 +66,7 @@ static void	finalize_ray_hit(t_ray_ctx *ctx, t_ray_hit *result)
 t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx)
 {
 	t_ray_hit	result;
+	t_dda_ctx	dda_ctx;
 
 	setup_ray_ctx(game, ctx);
 	dda_ctx.map_x = &ctx->map_x;
