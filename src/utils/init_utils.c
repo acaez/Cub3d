@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 13:07:32 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/19 16:30:39 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:47:31 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	init_player(t_player *player, t_game *game)
 	player->x = -1;
 	player->y = -1;
 	player->angle = 0;
-	player->speed = 0.03 * BLOCK;
+	player->speed = 0.023 * BLOCK;
 	player->rot_speed = 0.03;
 	player->key_up = false;
 	player->key_down = false;

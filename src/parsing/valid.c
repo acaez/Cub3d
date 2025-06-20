@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:39:16 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/16 12:23:26 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:58:03 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,27 +80,20 @@ static bool	map_contains_only_valid_chars(char **map)
 
 bool	validate_config(t_config *cfg, char **err)
 {
+	if (!file_exists(cfg->no_path)
+		|| !file_exists(cfg->so_path)
+		|| !file_exists(cfg->we_path)
+		|| !file_exists(cfg->ea_path))
+		return (*err = ft_strdup(ERR_TEXTURE_MISSING_FILE), false);
 	if (!cfg->no_path || !cfg->so_path
 		|| !cfg->we_path || !cfg->ea_path)
-	{
-		*err = ft_strdup(ERR_TEXTURE_PATHS);
-		return (false);
-	}
+		return (*err = ft_strdup(ERR_TEXTURE_PATHS), false);
 	if (cfg->floor_color == -1 || cfg->sky_color == -1)
-	{
-		*err = ft_strdup(ERR_COLOR_MISSING);
-		return (false);
-	}
+		return (*err = ft_strdup(ERR_COLOR_MISSING), false);
 	if (cfg->floor_color == cfg->sky_color)
-	{
-		*err = ft_strdup(ERR_COLOR_IDENTICAL);
-		return (false);
-	}
+		return (*err = ft_strdup(ERR_COLOR_IDENTICAL), false);
 	if (!cfg->map || cfg->map_width <= 2 || cfg->map_height <= 2)
-	{
-		*err = ft_strdup(ERR_MAP_INVALID_DIM);
-		return (false);
-	}
+		return (*err = ft_strdup(ERR_MAP_INVALID_DIM), false);
 	return (true);
 }
 

@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:43:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 17:21:25 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:51:00 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 
 # define WIDTH     1280
 # define HEIGHT    720
-# define BLOCK     64
+# define BLOCK     128
 # define PI        3.14159265359
 # define ZONE_WIDTH 32
 # define ZONE_HEIGHT 16
@@ -67,6 +67,8 @@
 #  define DESTROY_MASK      0
 # endif
 
+# define ERR_TEXTURE_MISSING_FILE \
+	"Config Validation : Missing texture file"
 # define ERR_TEXTURE_PATHS \
 	"Config Validation : Missing texture paths (NO, SO, WE, EA)."
 # define ERR_COLOR_MISSING \
@@ -401,6 +403,7 @@ float	fixed_dist(t_ray *r);
 bool	is_inside_map(char **map, int y, int x);
 bool	is_open_char(char c);
 bool	line_has_only_valid(char *s);
+bool	file_exists(char *path);
 /* ------------------------------ init_utils.c ---------------------------- */
 void	init_config(t_config *cfg);
 void	init_key(t_game *game);
