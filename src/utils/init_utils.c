@@ -77,8 +77,8 @@ void	init_player(t_player *player, t_game *game)
 	player->x = -1;
 	player->y = -1;
 	player->angle = 0;
-	player->speed = 0.04 * BLOCK;
-	player->rot_speed = 0.04;
+	player->speed = 0.03 * BLOCK;
+	player->rot_speed = 0.03;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_left = false;
