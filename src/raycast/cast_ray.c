@@ -20,6 +20,10 @@ static int	compute_tex_x(t_ray_hit *hit, t_texture *tex, float angle)
 	if ((hit->side == 0 && cosf(angle) > 0)
 		|| (hit->side == 1 && sinf(angle) < 0))
 		tex_x = tex->width - tex_x - 1;
+	if (tex_x < 0)
+		tex_x = 0;
+	if (tex_x >= tex->width)
+		tex_x = tex->width - 1;
 	return (tex_x);
 }
 
@@ -65,6 +69,8 @@ void	cast_ray(t_game *game, t_ray_ctx *ray, int x)
 	ctx.hit = calculate_distance(game, &ctx.ray);
 	if (ctx.hit.distance < 0.1f)
 		ctx.hit.distance = 0.1f;
+	angle_diff = ctx.ray.angle - game->player.angle;
+	corrected_distance = ctx.hit.distance * cosf(angle_diff);
 	ctx.wall_height = (BLOCK * HEIGHT) / (ctx.hit.distance * 2.0f);
 	if (ctx.wall_height > HEIGHT * 3)
 		ctx.wall_height = HEIGHT * 3;

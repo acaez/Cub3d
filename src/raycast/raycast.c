@@ -22,6 +22,10 @@ static void	init_raycast(t_game *game, t_player *player)
 		game->fraction = PI / 3 / WIDTH;
 	}
 	game->start_angle = player->angle - PI / 6;
+	while (player->angle < 0)
+		player->angle += 2 * PI;
+	while (player->angle >= 2 * PI)
+		player->angle -= 2 * PI;
 }
 
 static void	process_rays(t_game *game, t_player *player)
@@ -37,6 +41,10 @@ static void	process_rays(t_game *game, t_player *player)
 	while (i < WIDTH)
 	{
 		ray.angle = angle;
+		while (ray.angle < 0)
+			ray.angle += 2 * PI;
+		while (ray.angle >= 2 * PI)
+			ray.angle -= 2 * PI;
 		cast_ray(game, &ray, i);
 		angle += game->fraction;
 		i++;

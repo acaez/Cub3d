@@ -73,8 +73,12 @@ void	setup_ray_ctx(t_game *game, t_ray_ctx *ctx)
 	ctx->map_y = (int)(ctx->start_y / BLOCK);
 	ctx->delta_x = fabsf(1.0f / ctx->dx);
 	ctx->delta_y = fabsf(1.0f / ctx->dy);
-	init_step_and_dist(ctx->start_x, ctx->dx, ctx->delta_x,
-		(t_step_ctx){ctx->map_x, &ctx->step_x, &ctx->side_x});
-	init_step_and_dist(ctx->start_y, ctx->dy, ctx->delta_y,
-		(t_step_ctx){ctx->map_y, &ctx->step_y, &ctx->side_y});
+	step_ctx_x.map_pos = ctx->map_x;
+	step_ctx_x.step = &ctx->step_x;
+	step_ctx_x.side_dist = &ctx->side_x;
+	step_ctx_y.map_pos = ctx->map_y;
+	step_ctx_y.step = &ctx->step_y;
+	step_ctx_y.side_dist = &ctx->side_y;
+	init_step_and_dist(ctx->start_x, ctx->dx, ctx->delta_x, step_ctx_x);
+	init_step_and_dist(ctx->start_y, ctx->dy, ctx->delta_y, step_ctx_y);
 }
