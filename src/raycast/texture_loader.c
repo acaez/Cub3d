@@ -6,7 +6,7 @@
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:00:00 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/17 17:18:33 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:29:05 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,12 @@ static int	load_texture_image(t_tex_ctx *ctx)
 	t_texture	*tex;
 
 	tex = &ctx->game->textures[ctx->index];
-	tex->img = mlx_xpm_file_to_image(ctx->game->mlx, ctx->path,
-			ctx->w, ctx->h);
+	tex->img = mlx_xpm_file_to_image(ctx->game->mlx,
+		ctx->path, ctx->w, ctx->h);
 	if (!tex->img)
 		return (0);
 	tex->data = mlx_get_data_addr(tex->img,
-			&tex->bpp,
-			&tex->size_line,
-			&tex->endian);
+		&tex->bpp, &tex->size_line, &tex->endian);
 	tex->width = *ctx->w;
 	tex->height = *ctx->h;
 	return (1);

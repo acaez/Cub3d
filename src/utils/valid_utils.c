@@ -1,16 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   valide_utils.c                                     :+:      :+:    :+:   */
+/*   valid_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 12:07:13 by matsauva          #+#    #+#             */
-/*   Updated: 2025/06/13 12:07:16 by matsauva         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:33:32 by matsauva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cub3D.h"
+
+bool file_exists(const char *path)
+{
+	int fd = open(path, O_RDONLY);
+	if (fd < 0)
+		return (false);
+	close(fd);
+	return (true);
+}
 
 bool	is_inside_map(char **map, int y, int x)
 {
