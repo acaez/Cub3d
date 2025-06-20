@@ -59,6 +59,7 @@ static void	draw_vertical_line(t_game *game, t_draw_ctx ctx)
 void	cast_ray(t_game *game, t_ray_ctx *ray, int x)
 {
 	t_cast_ctx	ctx;
+	t_draw_ctx	draw_ctx;
 
 	ctx.ray = *ray;
 	ctx.hit = calculate_distance(game, &ctx.ray);
@@ -72,8 +73,11 @@ void	cast_ray(t_game *game, t_ray_ctx *ray, int x)
 	limit_wall_bounds(&ctx.wall_start, &ctx.wall_end);
 	ctx.tex = &game->textures[ctx.hit.tex_num];
 	ctx.tex_x = compute_tex_x(&ctx.hit, ctx.tex, ctx.ray.angle);
-	draw_vertical_line(game, (t_draw_ctx){
-		.tex = ctx.tex, .hit = &ctx.hit, .x = x,
-		.wall_start = ctx.wall_start, .wall_end = ctx.wall_end,
-		.tex_x = ctx.tex_x});
+	draw_ctx.tex = ctx.tex;
+	draw_ctx.hit = &ctx.hit;
+	draw_ctx.x = x;
+	draw_ctx.wall_start = ctx.wall_start;
+	draw_ctx.wall_end = ctx.wall_end;
+	draw_ctx.tex_x = ctx.tex_x;
+	draw_vertical_line(game, draw_ctx);
 }
