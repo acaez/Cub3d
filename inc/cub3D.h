@@ -32,14 +32,15 @@
 #  error "Unsupported platform: only Linux and macOS are supported"
 # endif
 
-# define WIDTH     1280
-# define HEIGHT    720
-# define BLOCK     128
+# define WIDTH 1280
+# define HEIGHT 720
+# define BLOCK     64
 # define PI        3.14159265359
 # define ZONE_WIDTH 32
 # define ZONE_HEIGHT 16
 # define MINIMAP_W_RATIO 0.2
 # define MINIMAP_H_RATIO 0.2
+
 # ifdef LINUX
 #  define W 119
 #  define A 97
@@ -53,7 +54,6 @@
 #  define KEY_PRESS_MASK    1
 #  define KEY_RELEASE_MASK  2
 #  define DESTROY_MASK      131072
-
 # elif MACOS
 #  define W 13
 #  define A 0
@@ -95,20 +95,16 @@
 #define PAUSE_RECT_W 480
 #define PAUSE_RECT_H 48
 
-typedef struct s_trigo
+typedef struct s_ray
 {
-	float	*cos_table;
-	float	*sin_table;
-	int		table_size;
-}	t_trigo;
-
-typedef struct s_ray_hit
-{
+	float	angle;
 	float	distance;
-	int		side;
-	float	wall_x;
-	int		tex_num;
-}	t_ray_hit;
+	int		hit_wall;
+	float	hit_x;
+	float	hit_y;
+	int		wall_direction;
+	float	wall_hit_x;
+}	t_ray;
 
 typedef struct s_texture
 {
@@ -181,62 +177,8 @@ typedef struct s_game
 	t_player	player;
 	t_config	config;
 	t_minimap	minimap;
-	t_trigo		trigo;
-	clock_t		last_frame;
-	t_texture	textures[4];
-	float		fraction;
-	float		start_angle;
 	bool	paused;
 }	t_game;
-
-typedef struct s_debug_map
-{
-	int		scale;
-	int		offset_x;
-	int		offset_y;
-}	t_debug_map;
-
-typedef struct s_ray
-{
-	t_game	*game;
-	t_player *player;
-	int		i;
-	int		wall_color;
-	float	ray_x;
-	float	ray_y;
-	float	angle; 
-	float	cos_angle;
-	float	sin_angle;
-	int		max_steps;
-	int		steps;
-	float	height;
-}	t_ray;
-
-typedef struct s_ray_ctx {
-	float		start_x;
-	float		start_y;
-	float		angle;
-	float		dx;
-	float		dy;
-	int			map_x;
-	int			map_y;
-	float		delta_x;
-	float		delta_y;
-	int			step_x;
-	int			step_y;
-	float		side_x;
-	float		side_y;
-	int			side;
-	float		wall_x;
-}	t_ray_ctx;
-
-typedef struct s_square
-{
-	int	x;
-	int	y;
-	int	size;
-	int	color;
-}	t_square;
 
 typedef struct s_tile_ctx
 {
@@ -246,52 +188,21 @@ typedef struct s_tile_ctx
 	int			start_y;
 }	t_tile_ctx;
 
-typedef struct s_step_ctx {
-	int	map_pos;
-	int	*step;
-	float	*side_dist;
-}	t_step_ctx;
-
-typedef struct s_dda_ctx {
-	int	*map_x;
-	int	*map_y;
-	float	*side_x;
-	float	*side_y;
-	float	delta_x;
-	float	delta_y;
-	int	*step_x;
-	int	*step_y;
-	int	*side;
-}	t_dda_ctx;
-
-typedef struct s_draw_ctx {
-	t_texture	*tex;
-	t_ray_hit	*hit;
-	int			x;
-	int			wall_start;
-	int			wall_end;
-	int			tex_x;
-}	t_draw_ctx;
-
-typedef struct s_tex_ctx
+typedef struct s_debug_map
 {
-	t_game	*game;
-	int		index;
-	char	*path;
-	int		*w;
-	int		*h;
-}	t_tex_ctx;
+	int		scale;
+	int		offset_x;
+	int		offset_y;
+}	t_debug_map;
 
-typedef struct s_cast_ctx
+
+typedef struct s_square
 {
-	t_ray_hit	hit;
-	t_texture	*tex;
-	float		wall_height;
-	int			wall_start;
-	int			wall_end;
-	int			tex_x;
-	t_ray_ctx	ray;
-}	t_cast_ctx;
+	int	x;
+	int	y;
+	int	size;
+	int	color;
+}	t_square;
 
 /* ============================== GAME  =================================== */
 /* ------------------------------ exit.c ---------------------------------- */
@@ -300,7 +211,6 @@ int		close_window(t_game *game);
 /* ------------------------------ free.c ---------------------------------- */
 void	free_map(char **map);
 void	free_config(t_config *cfg);
-void	free_trigo(t_trigo *trigo);
 /* ------------------------------ game.c ---------------------------------- */
 void	clear_image(t_game *game);
 void	draw_scene(t_game *game);
@@ -337,24 +247,11 @@ void	draw_crosshair(t_game *game);
 void	move_player(t_player *player);
 
 /* ============================== RAYCAST ================================= */
-/* ------------------------------ debug_mode.c ---------------------------- */
-void	draw_debug_rays(t_game *game, t_player *player);
-void	draw_debug_map(t_game *game);
+/* ------------------------------ draw_wall.c ----------------------------- */
+void	draw_wall_column(t_game *game, int x, t_ray *ray, float distance);
 
 /* ------------------------------ raycast.c ------------------------------- */
-t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx);
-int		raycast(t_game *game);
-int		load_textures(t_game *game);
-/* ----------------------------- cast_ray.c ------------------------------- */
-void	cast_ray(t_game *game, t_ray_ctx *ray, int x);
-/* ----------------------------- ray_math.c ------------------------------- */
-void	setup_ray_ctx(t_game *game, t_ray_ctx *ctx);
-int		get_texture_index(int side, float dx, float dy);
-float	compute_distance(float start, int map_pos, int step, float dir);
-/* ----------------------------- ray_hit.c -------------------------------- */
-t_ray_hit	calculate_distance(t_game *game, t_ray_ctx *ctx);
-/* -------------------------- texture_loader------------------------------- */
-int	load_textures(t_game *game);
+void	raycast(t_game *game);
 
 /* ============================== UTILITY ================================= */
 /* ------------------------------ debug_mode_utils.c ---------------------- */
@@ -380,41 +277,51 @@ bool	is_map_line(char *line);
 bool	parse_color(char *line, int *color);
 bool	set_texture(t_config *cfg, const char *id, const char *path);
 /* ------------------------------ pars_utils2.c --------------------------- */
-void	copy_normalized_spaces(const char *src, char *dst);
-char	*normalize_spaces(char *str);
-bool	is_empty_line(const char *line);
-char	*remove_trailing_newline(char *line);
+void		copy_normalized_spaces(const char *src, char *dst);
+char		*normalize_spaces(char *str);
+bool		is_empty_line(const char *line);
+char		*remove_trailing_newline(char *line);
 /* ------------------------------ pars_utils3.c --------------------------- */
-bool	parse_line(t_config *cfg, char *line);
-bool	add_line_to_map(t_config *cfg, char *line, int *sz, int *cap);
-bool	read_map_lines(t_config *cfg, int fd, char *line);
-bool	handle_trailing_lines(int fd, char **err);
+bool		parse_line(t_config *cfg, char *line);
+bool		add_line_to_map(t_config *cfg, char *line, int *sz, int *cap);
+bool		read_map_lines(t_config *cfg, int fd, char *line);
+bool		handle_trailing_lines(int fd, char **err);
 /* ------------------------------ map_utils.c ----------------------------- */
-void	draw_filled_square(t_game *game, t_square sq);
-void	draw_tile_line(t_tile_ctx *ctx, int y, int end_x);
-void	init_minimap(t_game *game);
+void		draw_filled_square(t_game *game, t_square sq);
+void		draw_tile_line(t_tile_ctx *ctx, int y, int end_x);
+void		init_minimap(t_game *game);
 
-/* ------------------------------ raycast_utils.c ------------------------- */
-void	get_trigo_value(t_trigo *trigo, float angle, float *cos_val, float *sin_val);
-void	limit_fps(t_game *game);
-int		check_collision(t_config *config, float x, float y);
-/* ----------------------------- raycast_utils2.c ------------------------- */
-float	distance(float dx, float dy);
-float	fixed_dist(t_ray *r);
 /* ------------------------------ valide_utils.c -------------------------- */
-bool	is_inside_map(char **map, int y, int x);
-bool	is_open_char(char c);
-bool	line_has_only_valid(char *s);
-bool	file_exists(char *path);
+bool		is_inside_map(char **map, int y, int x);
+bool		is_open_char(char c);
+bool		line_has_only_valid(char *s);
+bool		file_exists(char *path);
 /* ------------------------------ init_utils.c ---------------------------- */
-void	init_config(t_config *cfg);
-void	init_key(t_game *game);
-void	setup_dir(t_game *game, char direction);
-void	setup_pos(t_game *game);
-void	init_player(t_player *player, t_game *game);
-/* ------------------------------ key_utils.c ----------------------------- */
-bool	handle_pause_keys(int keycode, t_game *game);
-bool	handle_debug_keys(int keycode, t_game *game);
-void	movement_keys(int keycode, t_game *game);
+void		init_config(t_config *cfg);
+void		init_key(t_game *game);
+void		setup_dir(t_game *game, char direction);
+void		setup_pos(t_game *game);
+void		init_player(t_player *player, t_game *game);
+
+/* ------------------------------ init_utils.c ---------------------------- */
+float		normalize_angle(float angle);
+bool		hit_wall(t_game *game, int x, int y);
+int			get_wall_direction(float ray_angle);
+t_texture	*get_wall_texture(t_game *game, int direction);
+
+/* ------------------------------ key_utils.c ---------------------------
+- */
+bool		handle_pause_keys(int keycode, t_game *game);
+bool		handle_debug_keys(int keycode, t_game *game);
+void		movement_keys(int keycode, t_game *game);
+
+/* ------------------------------ player_utils.c --------------------------- */
+int			check_collision(t_config *config, float x, float y);
+
+/* ------------------------------ raycast_utils.c --------------------------- */
+float		normalize_angle(float angle);
+bool		hit_wall(t_game *game, int x, int y);
+int			get_wall_direction(float ray_angle);
+t_texture	*get_wall_texture(t_game *game, int direction);
 
 #endif

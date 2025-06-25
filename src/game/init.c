@@ -29,26 +29,6 @@ static void	init_mlx(t_game *game)
 		exit_error(game, ft_strdup("mlx_get_data_addr() failed"));
 }
 
-static void	init_trigo(t_trigo *trigo)
-{
-	int		i;
-	float	angle;
-
-	trigo->table_size = 3600;
-	trigo->cos_table = malloc(sizeof(float) * 3600);
-	trigo->sin_table = malloc(sizeof(float) * 3600);
-	if (!trigo->cos_table || !trigo->sin_table)
-		return ;
-	i = 0;
-	while (i < 3600)
-	{
-		angle = (float)i * 2.0f * PI / (float)3600;
-		trigo->cos_table[i] = cos(angle);
-		trigo->sin_table[i] = sin(angle);
-		i++;
-	}
-}
-
 static void	load_game(t_game *game, char *map_path, int debug_mode)
 {
 	char	*err;
@@ -111,8 +91,6 @@ void	init_game(t_game *game, int argc, char **argv)
 	load_game(game, argv[map_arg], debug);
 	init_minimap(game);
 	init_mlx(game);
-	init_trigo(&game->trigo);
-	game->last_frame = clock();
 	init_player(&game->player, game);
 	init_key(game);
 }

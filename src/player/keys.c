@@ -40,7 +40,7 @@ int	key_release(int keycode, t_game *game)
 		game->player.rot_right = false;
 	return (0);
 }
-
+/*
 int	mouse_move(int x, int y, void *param)
 {
 	t_game	*game;
@@ -64,3 +64,4 @@ int	mouse_move(int x, int y, void *param)
 	}
 	return (0);
 }
+*/

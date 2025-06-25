@@ -23,7 +23,7 @@ void	clear_image(t_game *game)
 		i++;
 	}
 }
-
+/*
 static void	draw_floor(t_game *game)
 {
 	int	x;
@@ -69,7 +69,7 @@ static void	draw_sky(t_game *game)
 		y++;
 	}
 }
-
+*/
 void	draw_scene(t_game *game)
 {
 	if (!game)
@@ -80,8 +80,8 @@ void	draw_scene(t_game *game)
 	}
 	else
 	{
-		draw_floor(game);
-		draw_sky(game);
+		//draw_floor(game);
+		//draw_sky(game);
 		raycast(game);
 		draw_crosshair(game);
 		if (game->config.map)

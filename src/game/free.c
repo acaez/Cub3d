@@ -43,11 +43,3 @@ void	free_config(t_config *cfg)
 		cfg->map = NULL;
 	}
 }
-
-void	free_trigo(t_trigo *trigo)
-{
-	if (trigo->cos_table)
-		free(trigo->cos_table);
-	if (trigo->sin_table)
-		free(trigo->sin_table);
-}

@@ -90,4 +90,3 @@ void	init_minimap(t_game *game)
 	game->minimap.origin_y = 10;
 	game->minimap.scale = (float)cell_size / (float)BLOCK;
 }
-
