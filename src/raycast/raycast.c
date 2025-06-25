@@ -1,52 +1,54 @@
 #include "../../inc/cub3D.h"
 
-static void	init_ray_params(t_game *game, float ray_angle, float *params)
+static void	init_ray(t_game *game, float ray_angle, t_ray_vars *vars)
 {
-	params[0] = game->player.x;
-	params[1] = game->player.y;
-	params[2] = cos(ray_angle);
-	params[3] = sin(ray_angle);
-}
-
-static float	cal_dist(float start_x, float start_y, float end_x, float end_y)
-{
-	return (sqrt((end_x - start_x) * (end_x - start_x)
-			+ (end_y - start_y) * (end_y - start_y)));
-}
-
-static void	ray_hit(t_ray *ray, float ray_angle, float prev_x, float prev_y)
-{
-	ray->wall_direction = get_wall_direction(ray_angle);
-	if (ray->wall_direction == 0 || ray->wall_direction == 2)
-		ray->wall_hit_x = fmod(prev_y, BLOCK) / BLOCK;
+	vars->dx = cos(ray_angle);
+	vars->dy = sin(ray_angle);
+	vars->map_x = (int)(game->player.x / BLOCK);
+	vars->map_y = (int)(game->player.y / BLOCK);
+	if (vars->dx == 0)
+		vars->delta_dist_x = 1e30;
 	else
-		ray->wall_hit_x = fmod(prev_x, BLOCK) / BLOCK;
+		vars->delta_dist_x = fabs(1.0 / vars->dx);
+	if (vars->dy == 0)
+		vars->delta_dist_y = 1e30;
+	else
+		vars->delta_dist_y = fabs(1.0 / vars->dy);
+	vars->hit = 0;
+}
+
+static void	perform_dda(t_game *game, t_ray_vars *vars)
+{
+	while (vars->hit == 0)
+	{
+		perform_dda_step(vars);
+		if (check_wall_hit(game, vars))
+			vars->hit = 1;
+	}
+}
+
+static void	calculate_ray_distance_and_position(t_game *game, t_ray *ray,
+											t_ray_vars *vars)
+{
+	if (vars->side == 0)
+		calculate_vertical_wall(game, ray, vars);
+	else
+		calculate_horizontal_wall(game, ray, vars);
+	if (ray->wall_direction == 2 || ray->wall_direction == 3)
+		ray->wall_hit_x = 1.0 - ray->wall_hit_x;
+	ray->distance *= BLOCK;
 }
 
 static float	cast_ray(t_game *game, float ray_angle, t_ray *ray)
 {
-	float	params[4];
-	float	distance;
-	float	prev_x;
-	float	prev_y;
+	t_ray_vars	vars;
 
-	init_ray_params(game, ray_angle, params);
-	distance = 0;
-	while (!hit_wall(game, (int)params[0], (int)params[1]))
-	{
-		prev_x = params[0];
-		prev_y = params[1];
-		params[0] += params[2];
-		params[1] += params[3];
-		distance = cal_dist(game->player.x, game->player.y,
-				params[0], params[1]);
-		if (distance > 1000)
-			break ;
-	}
-	ray->hit_x = params[0];
-	ray->hit_y = params[1];
-	ray_hit(ray, ray_angle, prev_x, prev_y);
-	return (distance);
+	init_ray(game, ray_angle, &vars);
+	calculate_step_and_side_dist(game, &vars);
+	calculate_step_and_side_dist_y(game, &vars);
+	perform_dda(game, &vars);
+	calculate_ray_distance_and_position(game, ray, &vars);
+	return (ray->distance);
 }
 
 void	raycast(t_game *game)

@@ -180,6 +180,22 @@ typedef struct s_game
 	bool	paused;
 }	t_game;
 
+typedef struct s_ray_vars
+{
+	float	dx;
+	float	dy;
+	float	delta_dist_x;
+	float	delta_dist_y;
+	float	side_dist_x;
+	float	side_dist_y;
+	int		map_x;
+	int		map_y;
+	int		step_x;
+	int		step_y;
+	int		hit;
+	int		side;
+}	t_ray_vars;
+
 typedef struct s_tile_ctx
 {
 	t_game		*game;
@@ -247,11 +263,11 @@ void	draw_crosshair(t_game *game);
 void	move_player(t_player *player);
 
 /* ============================== RAYCAST ================================= */
-/* ------------------------------ draw_wall.c ----------------------------- */
-void	draw_wall_column(t_game *game, int x, t_ray *ray, float distance);
-
 /* ------------------------------ raycast.c ------------------------------- */
 void	raycast(t_game *game);
+
+/* ------------------------------ texture.c ----------------------------- */
+void	draw_wall_column(t_game *game, int x, t_ray *ray, float distance);
 
 /* ============================== UTILITY ================================= */
 /* ------------------------------ debug_mode_utils.c ---------------------- */
@@ -309,7 +325,7 @@ bool		hit_wall(t_game *game, int x, int y);
 int			get_wall_direction(float ray_angle);
 t_texture	*get_wall_texture(t_game *game, int direction);
 
-/* ------------------------------ key_utils.c ---------------------------
+/* ------------------------------ key_utils.c --------------------------
 - */
 bool		handle_pause_keys(int keycode, t_game *game);
 bool		handle_debug_keys(int keycode, t_game *game);
@@ -318,10 +334,17 @@ void		movement_keys(int keycode, t_game *game);
 /* ------------------------------ player_utils.c --------------------------- */
 int			check_collision(t_config *config, float x, float y);
 
-/* ------------------------------ raycast_utils.c --------------------------- */
+/* ------------------------------ raycast_utils.c -------------------------- */
 float		normalize_angle(float angle);
-bool		hit_wall(t_game *game, int x, int y);
+void		calculate_step_and_side_dist(t_game *game, t_ray_vars *vars);
+void		calculate_step_and_side_dist_y(t_game *game, t_ray_vars *vars);
+int			check_wall_hit(t_game *game, t_ray_vars *vars);
+void		perform_dda_step(t_ray_vars *vars);
+
+/* ------------------------------ texture_utils.c -------------------------- */
 int			get_wall_direction(float ray_angle);
+void		calculate_vertical_wall(t_game *game, t_ray *ray, t_ray_vars *vars);
+void		calculate_horizontal_wall(t_game *game, t_ray *ray, t_ray_vars *vars);
 t_texture	*get_wall_texture(t_game *game, int direction);
 
 #endif

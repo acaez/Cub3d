@@ -9,59 +9,60 @@ float	normalize_angle(float angle)
 	return (angle);
 }
 
-bool	hit_wall(t_game *game, int x, int y)
+void	calculate_step_and_side_dist(t_game *game, t_ray_vars *vars)
 {
-	int	map_x;
-	int	map_y;
-
-	if (x < 0 || y < 0)
-		return (true);
-	map_x = x / BLOCK;
-	map_y = y / BLOCK;
-	if (map_x >= game->config.map_width || map_y >= game->config.map_height)
-		return (true);
-	if (game->config.map[map_y][map_x] == '1')
-		return (true);
-	return (false);
-}
-
-int	get_wall_direction(float ray_angle)
-{
-	ray_angle = normalize_angle(ray_angle);
-	if (ray_angle >= 0 && ray_angle < PI / 2)
-		return (0);
-	else if (ray_angle >= PI / 2 && ray_angle < PI)
-		return (1);
-	else if (ray_angle >= PI && ray_angle < 3 * PI / 2)
-		return (2);
-	else
-		return (3);
-}
-
-t_texture	*get_wall_texture(t_game *game, int direction)
-{
-	static t_texture	textures[4];
-	static bool			loaded = false;
-
-	if (!loaded)
+	if (vars->dx < 0)
 	{
-		textures[0].img = mlx_xpm_file_to_image(game->mlx,
-				game->config.ea_path, &textures[0].width, &textures[0].height);
-		textures[1].img = mlx_xpm_file_to_image(game->mlx,
-				game->config.so_path, &textures[1].width, &textures[1].height);
-		textures[2].img = mlx_xpm_file_to_image(game->mlx,
-				game->config.we_path, &textures[2].width, &textures[2].height);
-		textures[3].img = mlx_xpm_file_to_image(game->mlx,
-				game->config.no_path, &textures[3].width, &textures[3].height);
-		textures[0].data = mlx_get_data_addr(textures[0].img,
-				&textures[0].bpp, &textures[0].size_line, &textures[0].endian);
-		textures[1].data = mlx_get_data_addr(textures[1].img,
-				&textures[1].bpp, &textures[1].size_line, &textures[1].endian);
-		textures[2].data = mlx_get_data_addr(textures[2].img,
-				&textures[2].bpp, &textures[2].size_line, &textures[2].endian);
-		textures[3].data = mlx_get_data_addr(textures[3].img,
-				&textures[3].bpp, &textures[3].size_line, &textures[3].endian);
-		loaded = true;
+		vars->step_x = -1;
+		vars->side_dist_x = (game->player.x / BLOCK - vars->map_x)
+			* vars->delta_dist_x;
 	}
-	return (&textures[direction]);
+	else
+	{
+		vars->step_x = 1;
+		vars->side_dist_x = (vars->map_x + 1.0 - game->player.x / BLOCK)
+			* vars->delta_dist_x;
+	}
+}
+
+void	calculate_step_and_side_dist_y(t_game *game, t_ray_vars *vars)
+{
+	if (vars->dy < 0)
+	{
+		vars->step_y = -1;
+		vars->side_dist_y = (game->player.y / BLOCK - vars->map_y)
+			* vars->delta_dist_y;
+	}
+	else
+	{
+		vars->step_y = 1;
+		vars->side_dist_y = (vars->map_y + 1.0 - game->player.y / BLOCK)
+			* vars->delta_dist_y;
+	}
+}
+
+int	check_wall_hit(t_game *game, t_ray_vars *vars)
+{
+	if (vars->map_x < 0 || vars->map_y < 0
+		|| vars->map_x >= game->config.map_width
+		|| vars->map_y >= game->config.map_height
+		|| game->config.map[vars->map_y][vars->map_x] == '1')
+		return (1);
+	return (0);
+}
+
+void	perform_dda_step(t_ray_vars *vars)
+{
+	if (vars->side_dist_x < vars->side_dist_y)
+	{
+		vars->side_dist_x += vars->delta_dist_x;
+		vars->map_x += vars->step_x;
+		vars->side = 0;
+	}
+	else
+	{
+		vars->side_dist_y += vars->delta_dist_y;
+		vars->map_y += vars->step_y;
+		vars->side = 1;
+	}
 }

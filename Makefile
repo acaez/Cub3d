@@ -18,7 +18,7 @@ SRC      = main.c \
 		   player/keys.c \
 		   player/move.c \
 		   raycast/raycast.c \
-		   raycast/draw_wall.c \
+		   raycast/texture.c \
 		   utils/debug_utils.c \
 		   utils/draw_utils.c \
 		   utils/init_utils.c \
@@ -29,6 +29,7 @@ SRC      = main.c \
 		   utils/map_utils.c \
 		   utils/player_utils.c \
 		   utils/raycast_utils.c \
+		   utils/texture_utils.c \
 		   utils/valid_utils.c \
 
 OBJ    = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
