@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "../../inc/cub3D.h"
 
 void	put_pixel(t_game *game, int x, int y, int color)
 {
@@ -73,4 +73,46 @@ void	draw_pause_overlay(t_game *game)
 		0xFFFFFF, PAUSE_MSG1);
 	mlx_string_put(game->mlx, game->win, PAUSE_TXT2_X, PAUSE_TXT2_Y,
 		0xFFFFFF, PAUSE_MSG2);
+}
+
+void	init_fps(t_game *game)
+{
+	game->fps = 0;
+	game->frame_count = 0;
+	game->last_time = clock();
+	game->show_fps = false;
+}
+
+void	update_fps(t_game *game)
+{
+	clock_t	current_time;
+	double	elapsed;
+
+	game->frame_count++;
+	current_time = clock();
+	elapsed = ((double)(current_time - game->last_time)) / CLOCKS_PER_SEC;
+	if (elapsed >= 1.0)
+	{
+		game->fps = (int)(game->frame_count / elapsed);
+		game->frame_count = 0;
+		game->last_time = current_time;
+	}
+}
+
+void	draw_fps(t_game *game)
+{
+	char	*fps_str;
+	char	*fps_num;
+
+	if (!game->show_fps)
+		return ;
+	fps_num = ft_itoa(game->fps);
+	if (!fps_num)
+		return ;
+	fps_str = ft_strjoin("FPS: ", fps_num);
+	free(fps_num);
+	if (!fps_str)
+		return ;
+	mlx_string_put(game->mlx, game->win, 10, 20, 0xFFFFFF, fps_str);
+	free(fps_str);
 }

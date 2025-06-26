@@ -17,11 +17,9 @@ SRC      = main.c \
 		   parsing/valid.c \
 		   player/keys.c \
 		   player/move.c \
-		   raycast/debug_mode.c \
 		   raycast/raycast.c \
 		   raycast/texture.c \
-		   utils/debug_mode_utils.c \
-		   utils/debug_utils.c \
+		   utils/debug_mode.c \
 		   utils/draw_utils.c \
 		   utils/init_utils.c \
 		   utils/keys_utils.c \

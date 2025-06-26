@@ -76,14 +76,18 @@ static void	move_forward(t_player *player)
 	handle_movement_keys(player);
 	if (player->key_left)
 	{
-		new_x = player->x + cos(player->angle - PI / 2) * player->speed * player->strafe_speed;
-		new_y = player->y + sin(player->angle - PI / 2) * player->speed * player->strafe_speed;
+		new_x = player->x + cos(player->angle - PI / 2)
+			* player->speed * player->strafe;
+		new_y = player->y + sin(player->angle - PI / 2)
+			* player->speed * player->strafe;
 		try_move_player(player, new_x, new_y);
 	}
 	if (player->key_right)
 	{
-		new_x = player->x + cos(player->angle + PI / 2) * player->speed * player->strafe_speed;
-		new_y = player->y + sin(player->angle + PI / 2) * player->speed * player->strafe_speed;
+		new_x = player->x + cos(player->angle + PI / 2)
+			* player->speed * player->strafe;
+		new_y = player->y + sin(player->angle + PI / 2)
+			* player->speed * player->strafe;
 		try_move_player(player, new_x, new_y);
 	}
 }

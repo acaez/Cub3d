@@ -79,7 +79,7 @@ void	init_player(t_player *player, t_game *game)
 	player->angle = 0;
 	player->speed = 0.021 * BLOCK;
 	player->rot_speed = 0.02;
-	player->strafe_speed = 0.5;
+	player->strafe = 0.5;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_left = false;

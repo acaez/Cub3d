@@ -37,7 +37,7 @@ static void	draw_sky_floor(t_game *game, int x, int wall_start, int wall_end)
 	}
 }
 
-static void	draw_texture(t_game *game, int x, t_ray *ray, int wall_params[4])
+static void	draw_wall(t_game *game, int x, t_ray *ray, int wall_params[4])
 {
 	int			y;
 	float		wall_y;
@@ -54,7 +54,7 @@ static void	draw_texture(t_game *game, int x, t_ray *ray, int wall_params[4])
 	}
 }
 
-void	draw_wall_column(t_game *game, int x, t_ray *ray, float distance)
+void	draw_texture(t_game *game, int x, t_ray *ray, float distance)
 {
 	int		wall_params[4];
 	float	corrected_distance;
@@ -67,5 +67,5 @@ void	draw_wall_column(t_game *game, int x, t_ray *ray, float distance)
 	wall_params[0] = (HEIGHT - wall_params[2]) / 2;
 	wall_params[1] = wall_params[0] + wall_params[2];
 	draw_sky_floor(game, x, wall_params[0], wall_params[1]);
-	draw_texture(game, x, ray, wall_params);
+	draw_wall(game, x, ray, wall_params);
 }

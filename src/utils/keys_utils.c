@@ -49,6 +49,11 @@ bool	handle_debug_keys(int keycode, t_game *game)
 		}
 		return (true);
 	}
+	if (keycode == F)
+	{
+		game->show_fps = !game->show_fps;
+		return (true);
+	}
 	return (false);
 }
 

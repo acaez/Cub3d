@@ -66,7 +66,7 @@ void	raycast(t_game *game)
 		ray_angle = game->player.angle - (30 * PI / 180) + x * angle_step;
 		ray_angle = normalize_angle(ray_angle);
 		distance = cast_ray(game, ray_angle, &ray);
-		draw_wall_column(game, x, &ray, distance);
+		draw_texture(game, x, &ray, distance);
 		x++;
 	}
 }

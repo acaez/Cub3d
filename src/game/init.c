@@ -39,12 +39,6 @@ static void	load_game(t_game *game, char *map_path, int debug_mode)
 	init_config(&game->config);
 	if (!parse_cub_file(&game->config, map_path, &err))
 		exit_error(game, err);
-	if (game->debug_mode)
-	{
-		printf("Parsing OK\n");
-		print_config(&game->config);
-		print_map(game->config.map);
-	}
 	if (!validate_config(&game->config, &err))
 		exit_error(game, err);
 	if (game->debug_mode)
@@ -93,4 +87,5 @@ void	init_game(t_game *game, int argc, char **argv)
 	init_mlx(game);
 	init_player(&game->player, game);
 	init_key(game);
+	init_fps(game);
 }

@@ -67,8 +67,8 @@ void	draw_debug_cell(t_game *game, int x, int y, t_debug_map *dm)
 		j = 0;
 		while (j < dm->scale)
 		{
-			put_pixel(game, dm->offset_x + x * dm->scale + i,
-				dm->offset_y + y * dm->scale + j, color);
+			put_pixel(game, dm->offset_x + x * dm->scale + i, dm->offset_y + y
+				* dm->scale + j, color);
 			j++;
 		}
 		i++;
@@ -101,28 +101,30 @@ void	draw_debug_player(t_game *game, t_debug_map *dm)
 	}
 }
 
-void	draw_debug_impact(t_game *game, float ray_x, float ray_y,
-	t_debug_map *dm)
+void	debug_mode(t_game *game)
 {
-	float	impact_x;
-	float	impact_y;
-	int		i;
-	int		j;
+	t_debug_map	dm;
+	int			x;
+	int			y;
 
-	impact_x = dm->offset_x + ray_x / BLOCK * dm->scale;
-	impact_y = dm->offset_y + ray_y / BLOCK * dm->scale;
-	if (impact_x >= 0 && impact_x < WIDTH && impact_y >= 0 && impact_y < HEIGHT)
+	if (!game || !game->debug_mode)
+		return ;
+	dm.scale = calculate_debug_scale(game, &dm.offset_x, &dm.offset_y);
+	draw_debug_background(game);
+	y = 0;
+	while (y < game->config.map_height)
 	{
-		i = -1;
-		while (i <= 1)
+		x = 0;
+		while (x < game->config.map_width && game->config.map[y][x])
 		{
-			j = -1;
-			while (j <= 1)
-			{
-				put_pixel(game, impact_x + i, impact_y + j, 0xFFFF00);
-				j++;
-			}
-			i++;
+			draw_debug_cell(game, x, y, &dm);
+			x++;
 		}
+		y++;
 	}
+	draw_debug_player(game, &dm);
+	x = dm.offset_x + (int)(game->player.x / BLOCK * dm.scale);
+	y = dm.offset_y + (int)(game->player.y / BLOCK * dm.scale);
+	put_pixel(game, x + (int)(cos(game->player.angle) * dm.scale / 2), y
+		+ (int)(sin(game->player.angle) * dm.scale / 2), 0x00FF00);
 }
