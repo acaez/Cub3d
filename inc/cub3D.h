@@ -267,6 +267,9 @@ void	move_player(t_player *player);
 /* ------------------------------ raycast.c ------------------------------- */
 void	raycast(t_game *game);
 
+/* ------------------------------ debug.c --------------------------------- */
+void	debug_mode(t_game *game);
+
 /* ------------------------------ texture.c ----------------------------- */
 void	draw_wall_column(t_game *game, int x, t_ray *ray, float distance);
 

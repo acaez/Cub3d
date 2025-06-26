@@ -76,12 +76,10 @@ void	draw_scene(t_game *game)
 		return ;
 	if (game->debug_mode)
 	{
-		raycast(game);
+		debug_mode(game);
 	}
 	else
 	{
-		//draw_floor(game);
-		//draw_sky(game);
 		raycast(game);
 		draw_crosshair(game);
 		if (game->config.map)
