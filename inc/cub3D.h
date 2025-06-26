@@ -137,6 +137,7 @@ typedef struct s_player
 	float			angle;
 	float			speed;
 	float			rot_speed;
+	float			strafe_speed;
 	bool			key_up;
 	bool			key_down;
 	bool			key_left;

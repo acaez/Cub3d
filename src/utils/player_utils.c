@@ -22,7 +22,7 @@ int	check_collision(t_config *config, float x, float y)
 
 	if (!config || !config->map)
 		return (1);
-	margin = BLOCK * 0.1;
+	margin = BLOCK * 0.25;
 	if (is_blocked_at(config, x, y))
 		return (1);
 	if (is_blocked_at(config, x + margin, y))
