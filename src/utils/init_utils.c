@@ -72,23 +72,10 @@ void	setup_pos(t_game *game)
 	}
 }
 
-void	init_player(t_player *player, t_game *game)
+void	init_fps(t_game *game)
 {
-	player->x = -1;
-	player->y = -1;
-	player->angle = 0;
-	player->speed = 0.021 * BLOCK;
-	player->rot_speed = 0.02;
-	player->strafe = 0.5;
-	player->key_up = false;
-	player->key_down = false;
-	player->key_left = false;
-	player->key_right = false;
-	player->rot_left = false;
-	player->rot_right = false;
-	player->game = game;
-	player->config = game->config;
-	game->map = game->config.map;
-	game->paused = false;
-	setup_pos(game);
+	game->fps = 0;
+	game->frame_count = 0;
+	game->last_time = clock();
+	game->show_fps = false;
 }

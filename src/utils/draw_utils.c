@@ -75,14 +75,6 @@ void	draw_pause_overlay(t_game *game)
 		0xFFFFFF, PAUSE_MSG2);
 }
 
-void	init_fps(t_game *game)
-{
-	game->fps = 0;
-	game->frame_count = 0;
-	game->last_time = clock();
-	game->show_fps = false;
-}
-
 void	update_fps(t_game *game)
 {
 	clock_t	current_time;
@@ -113,6 +105,6 @@ void	draw_fps(t_game *game)
 	free(fps_num);
 	if (!fps_str)
 		return ;
-	mlx_string_put(game->mlx, game->win, 10, 20, 0xFFFFFF, fps_str);
+	mlx_string_put(game->mlx, game->win, WIDTH - 80, 20, 0xFFFFFF, fps_str);
 	free(fps_str);
 }

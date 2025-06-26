@@ -276,6 +276,20 @@ void				draw_crosshair(t_game *game);
 void				update_fps(t_game *game);
 void				draw_fps(t_game *game);
 void				init_fps(t_game *game);
+/* ------------------------------ init_utils.c ---------------------------- */
+void				init_config(t_config *cfg);
+void				init_key(t_game *game);
+void				setup_dir(t_game *game, char direction);
+void				setup_pos(t_game *game);
+void				init_fps(t_game *game);
+/* ------------------------------ key_utils.c ----------------------------- */
+bool				handle_pause_keys(int keycode, t_game *game);
+bool				handle_debug_keys(int keycode, t_game *game);
+void				movement_keys(int keycode, t_game *game);
+/* ------------------------------ map_utils.c ----------------------------- */
+void				draw_filled_square(t_game *game, t_square sq);
+void				draw_tile_line(t_tile_ctx *ctx, int y, int end_x);
+void				init_minimap(t_game *game);
 /* ------------------------------ pars_utils.c ---------------------------- */
 char				*ft_strtrim_free(char *str, const char *set);
 char				**ft_realloc_tab(char **old, int new_size);
@@ -294,30 +308,6 @@ bool				add_line_to_map(t_config *cfg, char *line, int *sz,
 						int *cap);
 bool				read_map_lines(t_config *cfg, int fd, char *line);
 bool				handle_trailing_lines(int fd, char **err);
-/* ------------------------------ map_utils.c ----------------------------- */
-void				draw_filled_square(t_game *game, t_square sq);
-void				draw_tile_line(t_tile_ctx *ctx, int y, int end_x);
-void				init_minimap(t_game *game);
-/* ------------------------------ valide_utils.c -------------------------- */
-bool				is_inside_map(char **map, int y, int x);
-bool				is_open_char(char c);
-bool				line_has_only_valid(char *s);
-bool				file_exists(char *path);
-/* ------------------------------ init_utils.c ---------------------------- */
-void				init_config(t_config *cfg);
-void				init_key(t_game *game);
-void				setup_dir(t_game *game, char direction);
-void				setup_pos(t_game *game);
-void				init_player(t_player *player, t_game *game);
-/* ------------------------------ init_utils.c ---------------------------- */
-float				normalize_angle(float angle);
-bool				hit_wall(t_game *game, int x, int y);
-int					get_wall_direction(float ray_angle);
-t_texture			*get_wall_texture(t_game *game, int direction);
-/* ------------------------------ key_utils.c ----------------------------- */
-bool				handle_pause_keys(int keycode, t_game *game);
-bool				handle_debug_keys(int keycode, t_game *game);
-void				movement_keys(int keycode, t_game *game);
 /* ------------------------------ player_utils.c -------------------------- */
 int					check_collision(t_config *config, float x, float y);
 /* ------------------------------ raycast_utils.c ------------------------- */
@@ -335,5 +325,10 @@ void				calculate_vertical_wall(t_game *game, t_ray *ray,
 void				calculate_horizontal_wall(t_game *game, t_ray *ray,
 						t_ray_vars *vars);
 t_texture			*get_wall_texture(t_game *game, int direction);
+/* ------------------------------ valide_utils.c -------------------------- */
+bool				is_inside_map(char **map, int y, int x);
+bool				is_open_char(char c);
+bool				line_has_only_valid(char *s);
+bool				file_exists(char *path);
 
 #endif

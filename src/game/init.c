@@ -74,6 +74,27 @@ static void	parse_args(int argc, char **argv, int *map_idx, int *debug)
 		exit_error(NULL, ft_strdup("Usage: ./cub3D <map.cub> [--debug]"));
 }
 
+static void	init_player(t_player *player, t_game *game)
+{
+	player->x = -1;
+	player->y = -1;
+	player->angle = 0;
+	player->speed = 0.021 * BLOCK;
+	player->rot_speed = 0.02;
+	player->strafe = 0.5;
+	player->key_up = false;
+	player->key_down = false;
+	player->key_left = false;
+	player->key_right = false;
+	player->rot_left = false;
+	player->rot_right = false;
+	player->game = game;
+	player->config = game->config;
+	game->map = game->config.map;
+	game->paused = false;
+	setup_pos(game);
+}
+
 void	init_game(t_game *game, int argc, char **argv)
 {
 	int	map_arg;
