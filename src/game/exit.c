@@ -42,7 +42,7 @@ void	exit_error(t_game *game, char *msg)
 
 int	close_window(t_game *game)
 {
-	//mlx_mouse_show(game->mlx, game->win);
+	mlx_mouse_show(game->mlx, game->win);
 	if (game->win)
 	{
 		mlx_destroy_window(game->mlx, game->win);

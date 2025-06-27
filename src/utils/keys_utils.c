@@ -29,7 +29,8 @@ bool	handle_pause_keys(int keycode, t_game *game)
 	{
 		game->paused = false;
 		mlx_mouse_hide(game->mlx, game->win);
-		mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
+		mlx_mouse_move(game->mlx, game->win,
+			game->window_width / 2, game->window_height / 2);
 		return (true);
 	}
 	return (false);
@@ -45,7 +46,8 @@ bool	handle_debug_keys(int keycode, t_game *game)
 		else
 		{
 			mlx_mouse_hide(game->mlx, game->win);
-			mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
+			mlx_mouse_move(game->mlx, game->win,
+				game->window_width / 2, game->window_height / 2);
 		}
 		return (true);
 	}

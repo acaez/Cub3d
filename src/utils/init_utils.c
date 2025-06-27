@@ -31,7 +31,8 @@ void	init_key(t_game *game)
 	mlx_hook(game->win, 3, KEY_RELEASE_MASK, key_release, game);
 	mlx_hook(game->win, 17, DESTROY_MASK, close_window, game);
 	mlx_mouse_hide(game->mlx, game->win);
-	mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
+	mlx_mouse_move(game->mlx, game->win, game->window_width / 2,
+		game->window_height / 2);
 	mlx_hook(game->win, 6, (1L << 6), mouse_move, game);
 }
 

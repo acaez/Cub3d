@@ -19,10 +19,12 @@ static void	init_mlx(t_game *game)
 		exit_error(game, ft_strdup("mlx_init() failed"));
 	game->window_width = WIDTH;
 	game->window_height = HEIGHT;
-	game->win = mlx_new_window(game->mlx, game->window_width, game->window_height, "cub3D");
+	game->win = mlx_new_window(game->mlx,
+			game->window_width, game->window_height, "cub3D");
 	if (!game->win)
 		exit_error(game, ft_strdup("mlx_new_window() failed"));
-	game->img = mlx_new_image(game->mlx, game->window_width, game->window_height);
+	game->img = mlx_new_image(game->mlx,
+			game->window_width, game->window_height);
 	if (!game->img)
 		exit_error(game, ft_strdup("mlx_new_image() failed"));
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,

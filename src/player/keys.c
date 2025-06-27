@@ -60,8 +60,8 @@ int	mouse_move(int x, int y, void *param)
 			game->player.angle += 2 * PI;
 		else if (game->player.angle > 2 * PI)
 			game->player.angle -= 2 * PI;
-		mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
+		mlx_mouse_move(game->mlx, game->win,
+			game->window_width / 2, game->window_height / 2);
 	}
 	return (0);
 }
-

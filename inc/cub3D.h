@@ -32,8 +32,8 @@
 #  error "Unsupported platform: only Linux and macOS are supported"
 # endif
 
-# define WIDTH 1280
-# define HEIGHT 720
+# define WIDTH 1800
+# define HEIGHT 1280
 # define BLOCK 64
 # define PI 3.14159265359
 # define ZONE_WIDTH 32

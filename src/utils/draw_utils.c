@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   game.c                                             :+:      :+:    :+:   */
+/*   draw_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: matsauva <matsauva@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -69,9 +69,9 @@ void	draw_pause_overlay(t_game *game)
 		}
 		i++;
 	}
-	mlx_string_put(game->mlx, game->win, game->window_width / 2 - 60, 
+	mlx_string_put(game->mlx, game->win, game->window_width / 2 - 60,
 		game->window_height / 2 - 10, 0xFFFFFF, PAUSE_MSG1);
-	mlx_string_put(game->mlx, game->win, game->window_width / 2 - 125, 
+	mlx_string_put(game->mlx, game->win, game->window_width / 2 - 125,
 		game->window_height / 2 + 10, 0xFFFFFF, PAUSE_MSG2);
 }
 
@@ -105,6 +105,7 @@ void	draw_fps(t_game *game)
 	free(fps_num);
 	if (!fps_str)
 		return ;
-	mlx_string_put(game->mlx, game->win, game->window_width - 80, 20, 0xFFFFFF, fps_str);
+	mlx_string_put(game->mlx, game->win,
+		game->window_width - 80, 20, 0xFFFFFF, fps_str);
 	free(fps_str);
 }
