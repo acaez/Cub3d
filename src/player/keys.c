@@ -40,7 +40,7 @@ int	key_release(int keycode, t_game *game)
 		game->player.rot_right = false;
 	return (0);
 }
-/*
+
 int	mouse_move(int x, int y, void *param)
 {
 	t_game	*game;
@@ -60,8 +60,8 @@ int	mouse_move(int x, int y, void *param)
 			game->player.angle += 2 * PI;
 		else if (game->player.angle > 2 * PI)
 			game->player.angle -= 2 * PI;
-		mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
+		mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
 	}
 	return (0);
 }
-*/
+

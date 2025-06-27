@@ -21,15 +21,15 @@ bool	handle_pause_keys(int keycode, t_game *game)
 		else
 		{
 			game->paused = true;
-			//mlx_mouse_show(game->mlx, game->win);
+			mlx_mouse_show(game->mlx, game->win);
 		}
 		return (true);
 	}
 	if (keycode == SPACE && game->paused)
 	{
 		game->paused = false;
-		//mlx_mouse_hide(game->mlx, game->win);
-		//mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
+		mlx_mouse_hide(game->mlx, game->win);
+		mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
 		return (true);
 	}
 	return (false);
@@ -41,11 +41,11 @@ bool	handle_debug_keys(int keycode, t_game *game)
 	{
 		game->debug_mode = !game->debug_mode;
 		if (game->debug_mode)
-			//mlx_mouse_show(game->mlx, game->win);
-		//else
+			mlx_mouse_show(game->mlx, game->win);
+		else
 		{
-			//mlx_mouse_hide(game->mlx, game->win);
-			//mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
+			mlx_mouse_hide(game->mlx, game->win);
+			mlx_mouse_move(game->mlx, game->win, game->window_width / 2, game->window_height / 2);
 		}
 		return (true);
 	}

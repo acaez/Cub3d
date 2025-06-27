@@ -17,7 +17,7 @@ static void	clear_image(t_game *game)
 	int	i;
 
 	i = 0;
-	while (i < WIDTH * HEIGHT * (game->bpp / 8))
+	while (i < game->window_width * game->window_height * (game->bpp / 8))
 	{
 		game->data[i] = 0;
 		i++;

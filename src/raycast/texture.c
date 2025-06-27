@@ -30,7 +30,7 @@ static void	draw_sky_floor(t_game *game, int x, int wall_start, int wall_end)
 		y++;
 	}
 	y = wall_end;
-	while (y < HEIGHT)
+	while (y < game->window_height)
 	{
 		put_pixel(game, x, y, game->config.floor_color);
 		y++;
@@ -61,10 +61,10 @@ void	draw_texture(t_game *game, int x, t_ray *ray, float distance)
 	float	ray_angle;
 
 	ray_angle = game->player.angle - (30 * PI / 180)
-		+ x * (60 * PI / 180) / WIDTH;
+		+ x * (60 * PI / 180) / game->window_width;
 	corrected_distance = distance * cos(game->player.angle - ray_angle);
-	wall_params[2] = (int)(BLOCK * HEIGHT / corrected_distance);
-	wall_params[0] = (HEIGHT - wall_params[2]) / 2;
+	wall_params[2] = (int)(BLOCK * game->window_height / corrected_distance);
+	wall_params[0] = (game->window_height - wall_params[2]) / 2;
 	wall_params[1] = wall_params[0] + wall_params[2];
 	draw_sky_floor(game, x, wall_params[0], wall_params[1]);
 	draw_wall(game, x, ray, wall_params);

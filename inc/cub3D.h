@@ -168,6 +168,8 @@ typedef struct s_game
 	int				bpp;
 	int				size_line;
 	int				endian;
+	int				window_width;
+	int				window_height;
 	bool			debug_mode;
 	t_player		player;
 	t_config		config;

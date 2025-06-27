@@ -60,8 +60,8 @@ void	raycast(t_game *game)
 	t_ray	ray;
 
 	x = 0;
-	angle_step = (60 * PI / 180) / WIDTH;
-	while (x < WIDTH)
+	angle_step = (60 * PI / 180) / game->window_width;
+	while (x < game->window_width)
 	{
 		ray_angle = game->player.angle - (30 * PI / 180) + x * angle_step;
 		ray_angle = normalize_angle(ray_angle);

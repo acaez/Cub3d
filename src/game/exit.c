@@ -20,8 +20,8 @@ static void	exit_game(t_game *game, int exit_code)
 			mlx_destroy_image(game->mlx, game->img);
 		if (game->win)
 			mlx_destroy_window(game->mlx, game->win);
-		//if (game->mlx)
-		//	mlx_destroy_display(game->mlx);
+		if (game->mlx)
+			mlx_destroy_display(game->mlx);
 		if (game->mlx)
 			free(game->mlx);
 		free_config(&game->config);
